@@ -30,6 +30,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/Cryptonote/hash.c
   ../cpp/Cryptonote/keccak.c
   ../cpp/Mnemonics/Mnemonics.cpp
+  ../cpp/Mnemonics/CRC32.cpp
   # Note: random.c not needed - we use libsodium via randombytes_buf() instead
 )
 

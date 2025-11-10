@@ -69,16 +69,5 @@ namespace crc32
         3009837614, 3294710456, 1567103746, 711928724, 3020668471, 3272380065, 1510334235, 755167117
     };
 
-    inline uint64_t crc32(const std::string& input)
-    {
-        uint64_t crc = 0xFFFFFFFF;
-
-        for (const char c : input)
-        {
-            const uint64_t byteIndex = (c ^ crc) & 0xff;
-            crc = ((crc >> 8) ^ table[byteIndex]);
-        }
-
-        return crc ^ 0xFFFFFFFF;
-    }
+    uint64_t crc32(const std::string& input);
 }
