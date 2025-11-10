@@ -34,14 +34,17 @@ HybridMnemonics::HybridMnemonics() : HybridObject(TAG) {
  */
 std::string HybridMnemonics::mn_encode(const std::string& privateKeyHex) {
   // Validate hex string length (must be 64 chars = 32 bytes)
-  if (privateKeyHex.length() != 64) {
+  // Use compile-time constant for optimization (matches CRYPTONOTE_KEY_SIZE)
+  constexpr size_t EXPECTED_HEX_LENGTH = CRYPTONOTE_KEY_SIZE * 2;
+  
+  if (privateKeyHex.length() != EXPECTED_HEX_LENGTH) {
     throw std::invalid_argument("Private key hex string must be exactly 64 characters (32 bytes)");
   }
 
   // Convert hex string to SecretKey using existing utility function
   crypto::SecretKey secretKey;
   
-  if (!cryptonote_utils::hextobin(privateKeyHex, secretKey.data, 32)) {
+  if (!cryptonote_utils::hextobin(privateKeyHex, secretKey.data, CRYPTONOTE_KEY_SIZE)) {
     throw std::invalid_argument("Invalid hex string in private key");
   }
 
@@ -72,19 +75,13 @@ std::string HybridMnemonics::mn_decode(const std::string& mnemonicPhrase) {
   
   // Check if conversion failed (returns default-constructed key with all zeros)
   // A valid secret key should never be all zeros
-  bool isAllZero = true;
-  for (size_t i = 0; i < 32; ++i) {
-    if (secretKey.data[i] != 0) {
-      isAllZero = false;
-      break;
-    }
-  }
-  
-  if (isAllZero) {
+  // Use memcmp for optimized zero-check (faster than loop)
+  static const crypto::SecretKey zeroKey = {};
+  if (std::memcmp(secretKey.data, zeroKey.data, CRYPTONOTE_KEY_SIZE) == 0) {
     throw std::invalid_argument("Invalid mnemonic phrase: wrong checksum, invalid words, or incorrect length");
   }
 
   // Convert SecretKey to hex string using existing utility function
-  return cryptonote_utils::bintohex(secretKey.data, 32);
+  return cryptonote_utils::bintohex(secretKey.data, CRYPTONOTE_KEY_SIZE);
 }
 

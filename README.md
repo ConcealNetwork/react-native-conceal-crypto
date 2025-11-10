@@ -9,6 +9,7 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 - **libsodium secretbox** - Authenticated encryption with XSalsa20-Poly1305
 - **HMAC-SHA1** - Message authentication for TOTP computation
 - **Cryptonote elliptic curve operations** - Complete blockchain crypto primitives
+- **Mnemonics encoding/decoding** - Native C++ implementation for 25-word English mnemonic phrases
 - **Hex conversion** - Convert between hex strings and binary data
 - **Cryptographically secure random** - Generate random data and mnemonic-style strings
 - **Zero-copy ArrayBuffer** - High-performance binary data handling
@@ -47,6 +48,12 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 
 ### Authentication
 - `hmacSha1(key, data)` - HMAC-SHA1 message authentication
+
+### Mnemonics (English Only)
+- `mnemonics.mn_encode(privateKeyHex)` - Encode a private key (64-char hex string) into a 25-word mnemonic phrase
+- `mnemonics.mn_decode(mnemonicPhrase)` - Decode a 25-word mnemonic phrase back to a private key (64-char hex string)
+
+**Note:** Only English language is supported. The mnemonic phrase must be exactly 25 words with a valid checksum.
 
 ## Installation
 
@@ -88,6 +95,14 @@ const postcompMult = concealCrypto.cryptonote.geDoubleScalarmultPostcompVartime(
 
 // Convert binary to hex
 const hex = concealCrypto.bintohex(buffer);
+
+// Mnemonics encoding/decoding (English only)
+const privateKeyHex = 'a1b2c3d4e5f6...'; // 64-character hex string
+const mnemonic = concealCrypto.mnemonics.mn_encode(privateKeyHex);
+// Returns: "word1 word2 word3 ... word25" (25 words)
+
+const decodedKey = concealCrypto.mnemonics.mn_decode(mnemonic);
+// Returns: original 64-character hex string
 ```
 
 ## Integrating Nitro in your app (Android)
