@@ -69,7 +69,7 @@ namespace crc32
         3009837614, 3294710456, 1567103746, 711928724, 3020668471, 3272380065, 1510334235, 755167117
     };
 
-    uint64_t crc32(const std::string& input)
+    inline uint64_t crc32(const std::string& input)
     {
         uint64_t crc = 0xFFFFFFFF;
 
