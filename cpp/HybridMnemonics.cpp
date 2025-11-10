@@ -9,7 +9,6 @@
 #include "HybridMnemonics.hpp"
 #include "HybridCryptonote.hpp"
 #include "Mnemonics/Mnemonics.h"
-#include "Mnemonics/CRC32.h"
 #include "Cryptonote/CryptoTypes.h"
 #include <stdexcept>
 #include <cstring>
