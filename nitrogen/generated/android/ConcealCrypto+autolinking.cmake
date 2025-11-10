@@ -35,6 +35,7 @@ target_sources(
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.cpp
   ../nitrogen/generated/shared/c++/HybridCryptonoteSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridMnemonicsSpec.cpp
   # Android-specific Nitrogen C++ sources
   
 )

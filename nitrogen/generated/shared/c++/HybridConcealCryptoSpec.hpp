@@ -15,11 +15,14 @@
 
 // Forward declaration of `HybridCryptonoteSpec` to properly resolve imports.
 namespace margelo::nitro::concealcrypto { class HybridCryptonoteSpec; }
+// Forward declaration of `HybridMnemonicsSpec` to properly resolve imports.
+namespace margelo::nitro::concealcrypto { class HybridMnemonicsSpec; }
 // Forward declaration of `ArrayBuffer` to properly resolve imports.
 namespace NitroModules { class ArrayBuffer; }
 
 #include <memory>
 #include "HybridCryptonoteSpec.hpp"
+#include "HybridMnemonicsSpec.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <string>
 #include <optional>
@@ -52,6 +55,7 @@ namespace margelo::nitro::concealcrypto {
     public:
       // Properties
       virtual std::shared_ptr<HybridCryptonoteSpec> getCryptonote() = 0;
+      virtual std::shared_ptr<HybridMnemonicsSpec> getMnemonics() = 0;
 
     public:
       // Methods

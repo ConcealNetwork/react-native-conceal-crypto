@@ -19,6 +19,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/install.cpp
   ../cpp/HybridConcealCrypto.cpp
   ../cpp/HybridCryptonote.cpp
+  ../cpp/HybridMnemonics.cpp
   ../cpp/Hmac.cpp
   ../cpp/chacha8.c
   ../cpp/chacha12.c
@@ -28,6 +29,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/Cryptonote/crypto-ops-data.c
   ../cpp/Cryptonote/hash.c
   ../cpp/Cryptonote/keccak.c
+  ../cpp/Mnemonics/Mnemonics.cpp
   # Note: random.c not needed - we use libsodium via randombytes_buf() instead
 )
 
@@ -37,6 +39,7 @@ add_library(${PACKAGE_NAME} SHARED
 include_directories(
   ../cpp
   ../cpp/Cryptonote
+  ../cpp/Mnemonics
   ../nitrogen/generated/shared/c++
   ${CMAKE_SOURCE_DIR}/../node_modules/react-native-nitro-modules/cpp
 )

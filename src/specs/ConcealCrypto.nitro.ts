@@ -1,5 +1,6 @@
 import type { HybridObject } from 'react-native-nitro-modules';
 import type { Cryptonote } from './Cryptonote.nitro';
+import type { Mnemonics } from './Mnemonics.nitro';
 
 export interface ConcealCrypto extends HybridObject<{ ios: 'c++'; android: 'c++' }> {
   // Basic crypto functions
@@ -17,4 +18,7 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'c++'; android: 'c++'
 
   // Cryptonote elliptic curve operations
   readonly cryptonote: Cryptonote;
+
+  // Mnemonics encoding/decoding operations
+  readonly mnemonics: Mnemonics;
 }

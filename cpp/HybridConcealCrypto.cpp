@@ -8,6 +8,7 @@
  */
 #include "HybridConcealCrypto.hpp"
 #include "HybridCryptonote.hpp"
+#include "HybridMnemonics.hpp"
 #include "chacha.h"
 #include "mn_random.h"
 #include <sodium.h>
@@ -23,11 +24,13 @@ constexpr auto TAG = "ConcealCrypto";
 
 /**
  * Constructor — must call HybridObject(TAG) base constructor.
- * Initialize the cryptonote sub-object.
+ * Initialize the cryptonote and mnemonics sub-objects.
  */
 HybridConcealCrypto::HybridConcealCrypto() : HybridObject(TAG) {
   // Initialize cryptonote sub-object
   _cryptonote = std::make_shared<HybridCryptonote>();
+  // Initialize mnemonics sub-object
+  _mnemonics = std::make_shared<HybridMnemonics>();
 }
 
 /**
@@ -282,4 +285,11 @@ std::optional<std::shared_ptr<ArrayBuffer>> HybridConcealCrypto::secretboxOpen(
  */
 std::shared_ptr<HybridCryptonoteSpec> HybridConcealCrypto::getCryptonote() {
   return _cryptonote;
+}
+
+/**
+ * Get the Mnemonics sub-object for mnemonic encoding/decoding operations
+ */
+std::shared_ptr<HybridMnemonicsSpec> HybridConcealCrypto::getMnemonics() {
+  return _mnemonics;
 }
