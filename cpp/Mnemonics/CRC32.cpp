@@ -25,19 +25,16 @@ SOFTWARE.
 
 #include "CRC32.h"
 
-namespace crc32
+uint64_t crc32::crc32(const std::string& input)
 {
-    uint64_t crc32(const std::string& input)
+    uint64_t crc = 0xFFFFFFFF;
+
+    for (const char c : input)
     {
-        uint64_t crc = 0xFFFFFFFF;
-
-        for (const char c : input)
-        {
-            const uint64_t byteIndex = (c ^ crc) & 0xff;
-            crc = ((crc >> 8) ^ table[byteIndex]);
-        }
-
-        return crc ^ 0xFFFFFFFF;
+        const uint64_t byteIndex = (c ^ crc) & 0xff;
+        crc = ((crc >> 8) ^ crc32::table[byteIndex]);
     }
+
+    return crc ^ 0xFFFFFFFF;
 }
 
