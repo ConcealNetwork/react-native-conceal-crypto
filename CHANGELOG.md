@@ -1,13 +1,7 @@
 # Changelog
 
-## Unpublished
-
-### 🛠 Breaking changes
-adding generate_ring_signature
-
-### 🎉 New features
-release built on tag
-
-### 🐛 Bug fixes
-
-### 💡 Others
+| Version | Breaking Changes | New Features | Bug Fixes | iOS     | Android |
+|---------|------------------|--------------|-----------|---------|---------|
+| v0.2.4  |                  |              |           |         | ✅      |
+| v0.2.5  | iOS support      |              |           | ✅      | ✅      |
+| v0.2.6  |                  | mnemonic     |           | ✅      | ✅      |
