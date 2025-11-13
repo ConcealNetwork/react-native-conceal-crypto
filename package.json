@@ -1,6 +1,6 @@
 {
   "name": "react-native-conceal-crypto",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Crypto utilities for Conceal implemented in native C++ using Nitro JSI.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
