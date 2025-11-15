@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'concealcrypto'
-version = '0.2.7'
+version = '0.2.8'
 
 android {
   namespace "concealcrypto"
@@ -21,7 +21,7 @@ android {
     minSdkVersion safeExtGet("minSdkVersion", 24)
     targetSdkVersion safeExtGet("targetSdkVersion", 34)
     versionCode 1
-    versionName "0.2.7"
+    versionName "0.2.8"
 
     // Tell Gradle to compile for all standard ABIs
     ndk {

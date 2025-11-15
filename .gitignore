@@ -8,3 +8,6 @@ android/.cxx/
 .idea/
 .idea/** */
 .idea/**/** */
+
+add_copyright.sh
+.cursorrules

@@ -152,8 +152,8 @@ const MAIN_APP_PATH = path.join(
   'main',
   'java',
   'com',
-  'acktarius',
-  'conceal2faapp',
+  '<your-name>',
+  '<your-app-name>',
   'MainApplication.kt'
 );
 
