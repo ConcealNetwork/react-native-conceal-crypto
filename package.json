@@ -10,10 +10,13 @@
     "clean": "npx nitrogen clean && cd android && ./gradlew clean",
     "test": "jest",
     "lint": "biome lint .",
-    "format": "biome format --write .",
-    "check": "biome check --write",
-    "check:cpp": "clang-format --dry-run --Werror cpp/**/*.cpp nitrogen/generated/**/*.cpp && echo Check complete!",
-    "format:cpp": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'"
+    "lint:fix": "biome lint --fix .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --fix .",
+    "cpp": "clang-format --dry-run --Werror cpp/**/*.cpp nitrogen/generated/**/*.cpp && echo Check complete!",
+    "cpp:fix": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'"
   },
   "keywords": [
     "react-native",
