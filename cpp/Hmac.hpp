@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2025 Acktarius, Conceal Devs
- * 
+ *
  * This file is part of react-native-conceal-crypto.
- * 
+ *
  * Distributed under the MIT software license, see the accompanying
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
@@ -19,21 +19,20 @@ namespace margelo::nitro::concealcrypto {
  * Used for TOTP computation and other cryptographic operations
  */
 class Hmac {
-public:
+ public:
   /**
    * Compute HMAC-SHA1 of data using the provided key
    * @param key The secret key as ArrayBuffer
    * @param data The message data as ArrayBuffer
    * @return HMAC-SHA1 result as ArrayBuffer (20 bytes)
    */
-  static std::shared_ptr<ArrayBuffer> hmacSha1(
-    const std::shared_ptr<ArrayBuffer>& key,
-    const std::shared_ptr<ArrayBuffer>& data
-  );
+  static std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key,
+                                               const std::shared_ptr<ArrayBuffer>& data);
 
-private:
+ private:
   // Performance optimization: pre-allocated thread-local buffers to reduce heap allocations
-  // Since HMAC is called frequently (e.g., TOTP every 30s, transaction signing), this reduces overhead
+  // Since HMAC is called frequently (e.g., TOTP every 30s, transaction signing), this reduces
+  // overhead
   struct HmacBuffers {
     std::vector<uint8_t> innerPadded;
     std::vector<uint8_t> outerPadded;
@@ -42,7 +41,7 @@ private:
   };
   static thread_local HmacBuffers buffers;
 
-private:
+ private:
   /**
    * SHA-1 hash function implementation
    * @param data Input data to hash
@@ -73,4 +72,4 @@ private:
   static std::shared_ptr<ArrayBuffer> vectorToArrayBuffer(const std::vector<uint8_t>& data);
 };
 
-} // namespace margelo::nitro::concealcrypto
+}  // namespace margelo::nitro::concealcrypto

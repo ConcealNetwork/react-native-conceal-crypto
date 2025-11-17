@@ -1,19 +1,20 @@
 /*
  * Copyright (c) 2025 Acktarius, Conceal Devs
- * 
+ *
  * This file is part of react-native-conceal-crypto.
- * 
+ *
  * Distributed under the MIT software license, see the accompanying
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
 #pragma once
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.hpp"
 #include "Hmac.hpp"
 #include "HybridCryptonote.hpp"
 #include "HybridMnemonics.hpp"
-#include <vector>
-#include <string>
-#include <memory>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -39,9 +40,9 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message,
                                          const std::shared_ptr<ArrayBuffer>& nonce,
                                          const std::shared_ptr<ArrayBuffer>& key) override;
-  std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext,
-                                                             const std::shared_ptr<ArrayBuffer>& nonce,
-                                                             const std::shared_ptr<ArrayBuffer>& key) override;
+  std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(
+      const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce,
+      const std::shared_ptr<ArrayBuffer>& key) override;
 
   // Cryptonote property getter
   std::shared_ptr<HybridCryptonoteSpec> getCryptonote() override;

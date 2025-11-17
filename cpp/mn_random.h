@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2025 Acktarius, Conceal Devs
- * 
+ *
  * This file is part of react-native-conceal-crypto.
- * 
+ *
  * Distributed under the MIT software license, see the accompanying
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
@@ -10,9 +10,9 @@
 #ifndef MN_RANDOM_H
 #define MN_RANDOM_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 /**
  * Generate cryptographically secure random data in multiples of 32 bits

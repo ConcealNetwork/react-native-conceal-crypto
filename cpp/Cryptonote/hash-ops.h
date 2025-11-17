@@ -45,15 +45,12 @@ void hash_process(union hash_state *state, const uint8_t *buf, size_t count);
 
 #endif
 
-enum {
-  HASH_SIZE = 32,
-  HASH_DATA_AREA = 136,
-  SLOW_HASH_CONTEXT_SIZE = 2097552
-};
+enum { HASH_SIZE = 32, HASH_DATA_AREA = 136, SLOW_HASH_CONTEXT_SIZE = 2097552 };
 
 void cn_fast_hash(const void *data, size_t length, char *hash);
 
 void tree_hash(const char (*hashes)[HASH_SIZE], size_t count, char *root_hash);
 size_t tree_depth(size_t count);
 void tree_branch(const char (*hashes)[HASH_SIZE], size_t count, char (*branch)[HASH_SIZE]);
-void tree_hash_from_branch(const char (*branch)[HASH_SIZE], size_t depth, const char *leaf, const void *path, char *root_hash);
+void tree_hash_from_branch(const char (*branch)[HASH_SIZE], size_t depth, const char *leaf,
+                           const void *path, char *root_hash);

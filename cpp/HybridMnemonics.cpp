@@ -1,17 +1,19 @@
 /*
  * Copyright (c) 2025 Acktarius, Conceal Devs
- * 
+ *
  * This file is part of react-native-conceal-crypto.
- * 
+ *
  * Distributed under the MIT software license, see the accompanying
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.
  */
 #include "HybridMnemonics.hpp"
+
+#include <cstring>
+#include <stdexcept>
+
+#include "Cryptonote/CryptoTypes.h"
 #include "HybridCryptonote.hpp"
 #include "Mnemonics/Mnemonics.h"
-#include "Cryptonote/CryptoTypes.h"
-#include <stdexcept>
-#include <cstring>
 
 using namespace margelo::nitro;
 using namespace margelo::nitro::concealcrypto;
@@ -22,12 +24,11 @@ constexpr auto TAG = "Mnemonics";
 /**
  * Constructor — must call HybridObject(TAG) base constructor.
  */
-HybridMnemonics::HybridMnemonics() : HybridObject(TAG) {
-}
+HybridMnemonics::HybridMnemonics() : HybridObject(TAG) {}
 
 /**
  * Encode a private key (hex string) into a mnemonic phrase.
- * 
+ *
  * @param privateKeyHex - 64-character hex string (32 bytes)
  * @returns Space-separated mnemonic phrase (25 words)
  * @throws std::invalid_argument if hex string is invalid or wrong length
@@ -36,21 +37,21 @@ std::string HybridMnemonics::mn_encode(const std::string& privateKeyHex) {
   // Validate hex string length (must be 64 chars = 32 bytes)
   // Use compile-time constant for optimization (matches CRYPTONOTE_KEY_SIZE)
   constexpr size_t EXPECTED_HEX_LENGTH = CRYPTONOTE_KEY_SIZE * 2;
-  
+
   if (privateKeyHex.length() != EXPECTED_HEX_LENGTH) {
     throw std::invalid_argument("Private key hex string must be exactly 64 characters (32 bytes)");
   }
 
   // Convert hex string to SecretKey using existing utility function
   crypto::SecretKey secretKey;
-  
+
   if (!cryptonote_utils::hextobin(privateKeyHex, secretKey.data, CRYPTONOTE_KEY_SIZE)) {
     throw std::invalid_argument("Invalid hex string in private key");
   }
 
   // Convert SecretKey to mnemonic using native C++ implementation
   std::string mnemonic = mnemonics::privateKeyToMnemonic(secretKey);
-  
+
   if (mnemonic.empty()) {
     throw std::runtime_error("Failed to encode private key to mnemonic");
   }
@@ -60,7 +61,7 @@ std::string HybridMnemonics::mn_encode(const std::string& privateKeyHex) {
 
 /**
  * Decode a mnemonic phrase into a private key (hex string).
- * 
+ *
  * @param mnemonicPhrase - Space-separated mnemonic phrase (25 words)
  * @returns 64-character hex string (32 bytes)
  * @throws std::invalid_argument if mnemonic is invalid or has wrong checksum
@@ -72,16 +73,16 @@ std::string HybridMnemonics::mn_decode(const std::string& mnemonicPhrase) {
 
   // Convert mnemonic to SecretKey using native C++ implementation
   crypto::SecretKey secretKey = mnemonics::mnemonicToPrivateKey(mnemonicPhrase);
-  
+
   // Check if conversion failed (returns default-constructed key with all zeros)
   // A valid secret key should never be all zeros
   // Use memcmp for optimized zero-check (faster than loop)
   static const crypto::SecretKey zeroKey = {};
   if (std::memcmp(secretKey.data, zeroKey.data, CRYPTONOTE_KEY_SIZE) == 0) {
-    throw std::invalid_argument("Invalid mnemonic phrase: wrong checksum, invalid words, or incorrect length");
+    throw std::invalid_argument(
+        "Invalid mnemonic phrase: wrong checksum, invalid words, or incorrect length");
   }
 
   // Convert SecretKey to hex string using existing utility function
   return cryptonote_utils::bintohex(secretKey.data, CRYPTONOTE_KEY_SIZE);
 }
-

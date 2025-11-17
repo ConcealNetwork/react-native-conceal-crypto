@@ -3,20 +3,19 @@
 //
 // Please see the included LICENSE file for more information.
 
-#include "../Cryptonote/CryptoTypes.h"
-
 #include <vector>
 
-namespace mnemonics
-{
-    crypto::SecretKey mnemonicToPrivateKey(const std::string &words);
-    crypto::SecretKey mnemonicToPrivateKey(const std::vector<std::string> &words);
+#include "../Cryptonote/CryptoTypes.h"
 
-    std::string privateKeyToMnemonic(const crypto::SecretKey &privateKey);
+namespace mnemonics {
+crypto::SecretKey mnemonicToPrivateKey(const std::string &words);
+crypto::SecretKey mnemonicToPrivateKey(const std::vector<std::string> &words);
 
-    bool hasValidChecksum(const std::vector<std::string> &words);
+std::string privateKeyToMnemonic(const crypto::SecretKey &privateKey);
 
-    std::string getChecksumWord(const std::vector<std::string> &words);
+bool hasValidChecksum(const std::vector<std::string> &words);
 
-    std::vector<int> getWordIndexes(const std::vector<std::string> &words);
-}
+std::string getChecksumWord(const std::vector<std::string> &words);
+
+std::vector<int> getWordIndexes(const std::vector<std::string> &words);
+}  // namespace mnemonics

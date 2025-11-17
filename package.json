@@ -15,8 +15,8 @@
     "format:fix": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --fix .",
-    "cpp": "clang-format --dry-run --Werror cpp/**/*.cpp nitrogen/generated/**/*.cpp && echo Check complete!",
-    "cpp:fix": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'"
+    "cpp": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format --dry-run --Werror {} + && echo Check complete!",
+    "cpp:fix": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format -i {} +"
   },
   "keywords": [
     "react-native",
