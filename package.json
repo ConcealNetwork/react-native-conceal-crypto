@@ -8,7 +8,6 @@
   "scripts": {
     "nitrogen:init": "npx nitrogen && node scripts/fix-visibility.js",
     "clean": "npx nitrogen clean && cd android && ./gradlew clean",
-    "test": "jest",
     "lint": "biome lint .",
     "lint:fix": "biome lint --fix .",
     "format": "biome format .",
