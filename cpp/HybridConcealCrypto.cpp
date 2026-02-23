@@ -168,12 +168,19 @@ std::shared_ptr<ArrayBuffer> HybridConcealCrypto::chacha12(
   return ArrayBuffer::copy(output);
 }
 
-/**
- * HMAC-SHA1 implementation for TOTP computation
- */
 std::shared_ptr<ArrayBuffer> HybridConcealCrypto::hmacSha1(
     const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) {
   return Hmac::hmacSha1(key, data);
+}
+
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::hmacSha256(
+    const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) {
+  return Hmac::hmacSha256(key, data);
+}
+
+std::shared_ptr<ArrayBuffer> HybridConcealCrypto::hmacSha512(
+    const std::shared_ptr<ArrayBuffer>& key, const std::shared_ptr<ArrayBuffer>& data) {
+  return Hmac::hmacSha512(key, data);
 }
 
 /**

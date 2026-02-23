@@ -35,6 +35,10 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
                                         const std::shared_ptr<ArrayBuffer>& iv) override;
   std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key,
                                         const std::shared_ptr<ArrayBuffer>& data) override;
+  std::shared_ptr<ArrayBuffer> hmacSha256(const std::shared_ptr<ArrayBuffer>& key,
+                                          const std::shared_ptr<ArrayBuffer>& data) override;
+  std::shared_ptr<ArrayBuffer> hmacSha512(const std::shared_ptr<ArrayBuffer>& key,
+                                          const std::shared_ptr<ArrayBuffer>& data) override;
   std::string random(double bits) override;
   std::shared_ptr<ArrayBuffer> randomBytes(double bytes) override;
   std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message,

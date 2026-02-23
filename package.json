@@ -1,6 +1,6 @@
 {
   "name": "react-native-conceal-crypto",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Crypto utilities for Conceal implemented in native C++ using Nitro JSI.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -37,7 +37,7 @@
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/concealnetwork/react-native-conceal-crypto#readme",
   "devDependencies": {
-    "@biomejs/biome": "^2.2.6",
+    "@biomejs/biome": "^2.4.4",
     "@types/react": "^19.1.0",
     "clang-format": "^1.8.0",
     "nitrogen": "^0.30.2",
@@ -69,7 +69,8 @@
   "overrides": {
     "ip": "^2.0.1",
     "tmp": "^0.2.3",
-    "js-yaml": "^4.1.1"
+    "js-yaml": "^4.1.1",
+    "minimatch": "^10.2.1"
   },
   "nativePackage": true
 }

@@ -11,6 +11,8 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'c++'; android: 'c++'
   chacha8(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
   chacha12(input: ArrayBuffer, key: ArrayBuffer, iv: ArrayBuffer): ArrayBuffer;
   hmacSha1(key: ArrayBuffer, data: ArrayBuffer): ArrayBuffer;
+  hmacSha256(key: ArrayBuffer, data: ArrayBuffer): ArrayBuffer;
+  hmacSha512(key: ArrayBuffer, data: ArrayBuffer): ArrayBuffer;
   random(bits: number): string;
   randomBytes(bytes: number): ArrayBuffer;
   secretbox(message: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer;

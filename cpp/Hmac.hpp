@@ -8,26 +8,47 @@
  */
 #pragma once
 #include <NitroModules/ArrayBuffer.hpp>
+#include <cstdint>
+#include <cstring>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 namespace margelo::nitro::concealcrypto {
 
 /**
- * HMAC-SHA1 implementation following RFC 2104 and FIPS 198-1
+ * HMAC-SHA1/SHA-256/SHA-512 implementations following RFC 2104 / RFC 4231 / FIPS 180-4
  * Used for TOTP computation and other cryptographic operations
  */
 class Hmac {
  public:
   /**
-   * Compute HMAC-SHA1 of data using the provided key
+   * Compute HMAC-SHA1 of data using the provided key (RFC 2104, FIPS 198-1)
    * @param key The secret key as ArrayBuffer
    * @param data The message data as ArrayBuffer
    * @return HMAC-SHA1 result as ArrayBuffer (20 bytes)
    */
   static std::shared_ptr<ArrayBuffer> hmacSha1(const std::shared_ptr<ArrayBuffer>& key,
                                                const std::shared_ptr<ArrayBuffer>& data);
+
+  /**
+   * Compute HMAC-SHA256 of data using the provided key (RFC 2104, FIPS 180-4)
+   * @param key The secret key as ArrayBuffer
+   * @param data The message data as ArrayBuffer
+   * @return HMAC-SHA256 result as ArrayBuffer (32 bytes)
+   */
+  static std::shared_ptr<ArrayBuffer> hmacSha256(const std::shared_ptr<ArrayBuffer>& key,
+                                                 const std::shared_ptr<ArrayBuffer>& data);
+
+  /**
+   * Compute HMAC-SHA512 of data using the provided key (RFC 2104, FIPS 180-4)
+   * @param key The secret key as ArrayBuffer
+   * @param data The message data as ArrayBuffer
+   * @return HMAC-SHA512 result as ArrayBuffer (64 bytes)
+   */
+  static std::shared_ptr<ArrayBuffer> hmacSha512(const std::shared_ptr<ArrayBuffer>& key,
+                                                 const std::shared_ptr<ArrayBuffer>& data);
 
  private:
   // Performance optimization: pre-allocated thread-local buffers to reduce heap allocations
@@ -43,32 +64,74 @@ class Hmac {
 
  private:
   /**
-   * SHA-1 hash function implementation
-   * @param data Input data to hash
-   * @return SHA-1 hash as vector of bytes (20 bytes)
+   * SHA-1 hash function (FIPS 180-4, Section 6.1)
+   * @return 20-byte digest
    */
   static std::vector<uint8_t> sha1(const std::vector<uint8_t>& data);
 
   /**
-   * Left rotate operation for SHA-1
-   * @param value Value to rotate
-   * @param amount Number of bits to rotate left
-   * @return Rotated value
+   * SHA-256 hash function (FIPS 180-4, Section 6.2)
+   * @return 32-byte digest
    */
+  static std::vector<uint8_t> sha256(const std::vector<uint8_t>& data);
+
+  /**
+   * SHA-512 hash function (FIPS 180-4, Section 6.4)
+   * @return 64-byte digest
+   */
+  static std::vector<uint8_t> sha512(const std::vector<uint8_t>& data);
+
+  /**
+   * Generic RFC 2104 HMAC core — shared by hmacSha1 / hmacSha256 / hmacSha512.
+   * @param hashFn     The underlying hash function (sha1 / sha256 / sha512)
+   * @param blockSize  Hash function block size in bytes (64 for SHA-1/256, 128 for SHA-512)
+   */
+  template <typename HashFunc>
+  static std::shared_ptr<ArrayBuffer> hmacImpl(HashFunc&& hashFn, size_t blockSize,
+                                               const std::shared_ptr<ArrayBuffer>& key,
+                                               const std::shared_ptr<ArrayBuffer>& data) {
+    if (!key || !data) {
+      throw std::invalid_argument("Key and data must not be null");
+    }
+
+    std::vector<uint8_t> keyBytes = arrayBufferToVector(key);
+    std::vector<uint8_t> dataBytes = arrayBufferToVector(data);
+
+    // Step 1: Normalise key to exactly blockSize bytes (RFC 2104 §2)
+    if (keyBytes.size() > blockSize) {
+      keyBytes = hashFn(keyBytes);
+    }
+    if (keyBytes.size() < blockSize) {
+      keyBytes.resize(blockSize, 0);
+    }
+
+    // Step 2: Build ipad / opad keys — reuse thread-local buffers to avoid heap churn
+    buffers.innerPadded.resize(blockSize);
+    buffers.outerPadded.resize(blockSize);
+    for (size_t i = 0; i < blockSize; i++) {
+      buffers.innerPadded[i] = keyBytes[i] ^ 0x36;
+      buffers.outerPadded[i] = keyBytes[i] ^ 0x5c;
+    }
+
+    // Step 3: inner hash — H(ipad || data)
+    buffers.innerData.resize(blockSize + dataBytes.size());
+    std::memcpy(buffers.innerData.data(), buffers.innerPadded.data(), blockSize);
+    std::memcpy(buffers.innerData.data() + blockSize, dataBytes.data(), dataBytes.size());
+    std::vector<uint8_t> innerHash = hashFn(buffers.innerData);
+
+    // Step 4: outer hash — H(opad || innerHash)
+    buffers.outerData.resize(blockSize + innerHash.size());
+    std::memcpy(buffers.outerData.data(), buffers.outerPadded.data(), blockSize);
+    std::memcpy(buffers.outerData.data() + blockSize, innerHash.data(), innerHash.size());
+
+    return vectorToArrayBuffer(hashFn(buffers.outerData));
+  }
+
   static constexpr uint32_t leftRotate(uint32_t value, int amount) noexcept;
+  static constexpr uint32_t rightRotate32(uint32_t value, int amount) noexcept;
+  static constexpr uint64_t rightRotate64(uint64_t value, int amount) noexcept;
 
-  /**
-   * Convert ArrayBuffer to vector of bytes
-   * @param buffer Input ArrayBuffer
-   * @return Vector of bytes
-   */
   static std::vector<uint8_t> arrayBufferToVector(const std::shared_ptr<ArrayBuffer>& buffer);
-
-  /**
-   * Convert vector of bytes to ArrayBuffer
-   * @param data Vector of bytes
-   * @return ArrayBuffer
-   */
   static std::shared_ptr<ArrayBuffer> vectorToArrayBuffer(const std::vector<uint8_t>& data);
 };
 
