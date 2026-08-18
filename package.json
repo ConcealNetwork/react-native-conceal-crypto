@@ -1,6 +1,6 @@
 {
   "name": "react-native-conceal-crypto",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "Crypto utilities for Conceal implemented in native C++ using Nitro JSI.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -8,15 +8,14 @@
   "scripts": {
     "nitrogen:init": "npx nitrogen && node scripts/fix-visibility.js",
     "clean": "npx nitrogen clean && cd android && ./gradlew clean",
-    "test": "jest",
     "lint": "biome lint .",
     "lint:fix": "biome lint --fix .",
     "format": "biome format .",
     "format:fix": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --fix .",
-    "cpp": "clang-format --dry-run --Werror cpp/**/*.cpp nitrogen/generated/**/*.cpp && echo Check complete!",
-    "cpp:fix": "clang-format -i 'cpp/**/*.{cpp,hpp,c,h}' 'nitrogen/generated/**/*.{cpp,hpp,h}'"
+    "cpp": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format --dry-run --Werror {} + && echo Check complete!",
+    "cpp:fix": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format -i {} +"
   },
   "keywords": [
     "react-native",
@@ -38,7 +37,7 @@
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/concealnetwork/react-native-conceal-crypto#readme",
   "devDependencies": {
-    "@biomejs/biome": "^2.2.6",
+    "@biomejs/biome": "^2.5.9",
     "@types/react": "^19.1.0",
     "clang-format": "^1.8.0",
     "nitrogen": "^0.30.2",
@@ -47,8 +46,8 @@
     "typescript": "^5.5.0"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*",
+    "react": "^19.1.1",
+    "react-native": "~0.82.0",
     "react-native-nitro-modules": "^0.30.2"
   },
   "files": [
@@ -70,7 +69,19 @@
   "overrides": {
     "ip": "^2.0.1",
     "tmp": "^0.2.3",
-    "js-yaml": "^4.1.1"
+    "js-yaml": "^4.3.0",
+    "shell-quote": "^1.9.0",
+    "brace-expansion": "^1.1.18",
+    "minimatch": "^3.1.5",
+    "@babel/core": "^7.29.6",
+    "react-native": {
+      "picomatch": "^2.3.2"
+    },
+    "nitrogen": {
+      "picomatch": "^4.0.4"
+    },
+    "ws": "^7.5.13",
+    "yaml": "^2.8.4"
   },
   "nativePackage": true
 }

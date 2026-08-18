@@ -47,7 +47,9 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 - `randomBytes(bytes)` - Generate random bytes as ArrayBuffer
 
 ### Authentication
-- `hmacSha1(key, data)` - HMAC-SHA1 message authentication
+- `hmacSha1(key, data)` - HMAC-SHA1 message authentication (RFC 2104 / FIPS 198-1, 20-byte output)
+- `hmacSha256(key, data)` - HMAC-SHA256 message authentication (RFC 4231 / FIPS 180-4, 32-byte output)
+- `hmacSha512(key, data)` - HMAC-SHA512 message authentication (RFC 4231 / FIPS 180-4, 64-byte output)
 
 ### Mnemonics (English Only)
 - `mnemonics.mn_encode(privateKeyHex)` - Encode a private key (64-char hex string) into a 25-word mnemonic phrase

@@ -22,29 +22,22 @@ static inline uint32_t rol32(uint32_t x, int r) {
   return _rotl(x, r);
 }
 
-static inline uint64_t rol64(uint64_t x, int r) {
-  return _rotl64(x, r);
-}
+static inline uint64_t rol64(uint64_t x, int r) { return _rotl64(x, r); }
 
 #else
 
-static inline uint32_t rol32(uint32_t x, int r) {
-  return (x << (r & 31)) | (x >> (-r & 31));
-}
+static inline uint32_t rol32(uint32_t x, int r) { return (x << (r & 31)) | (x >> (-r & 31)); }
 
-static inline uint64_t rol64(uint64_t x, int r) {
-  return (x << (r & 63)) | (x >> (-r & 63));
-}
+static inline uint64_t rol64(uint64_t x, int r) { return (x << (r & 63)) | (x >> (-r & 63)); }
 
 #endif
 
-#define IDENT32(x) ((uint32_t) (x))
-#define IDENT64(x) ((uint64_t) (x))
+#define IDENT32(x) ((uint32_t)(x))
+#define IDENT64(x) ((uint64_t)(x))
 
-#define SWAP32(x) ((((uint32_t) (x) & 0x000000ff) << 24) | \
-  (((uint32_t) (x) & 0x0000ff00) <<  8) | \
-  (((uint32_t) (x) & 0x00ff0000) >>  8) | \
-  (((uint32_t) (x) & 0xff000000) >> 24))
+#define SWAP32(x)                                                           \
+  ((((uint32_t)(x)&0x000000ff) << 24) | (((uint32_t)(x)&0x0000ff00) << 8) | \
+   (((uint32_t)(x)&0x00ff0000) >> 8) | (((uint32_t)(x)&0xff000000) >> 24))
 
 static inline uint32_t ident32(uint32_t x) { return x; }
 static inline uint32_t swap32(uint32_t x) {
