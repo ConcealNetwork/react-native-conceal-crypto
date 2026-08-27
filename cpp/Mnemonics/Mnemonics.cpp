@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <utility>
 
 #include "CRC32.h"
 #include "WordList.h"
@@ -28,7 +29,20 @@ crypto::SecretKey mnemonicToPrivateKey(const std::string &words) {
 /* Note - if the returned string is not empty, it is an error message, and
    the returned secret key is not initialized. */
 crypto::SecretKey mnemonicToPrivateKey(const std::vector<std::string> &words) {
-  const size_t len = words.size();
+  /* Normalize to lower case up front so word validation, checksum
+     derivation, and word list index lookups all operate on the same
+     casing; otherwise a mixed-case phrase can pass validation while
+     the index lookup misses and decodes a wrong private key */
+  std::vector<std::string> normalizedWords;
+  normalizedWords.reserve(words.size());
+
+  for (const auto &word : words) {
+    std::string lowerWord = word;
+    std::transform(lowerWord.begin(), lowerWord.end(), lowerWord.begin(), ::tolower);
+    normalizedWords.push_back(std::move(lowerWord));
+  }
+
+  const size_t len = normalizedWords.size();
 
   /* Mnemonics must be 25 words long */
   if (len != 25) {
@@ -40,10 +54,7 @@ crypto::SecretKey mnemonicToPrivateKey(const std::vector<std::string> &words) {
   }
 
   /* All words must be present in the word list */
-  for (auto word : words) {
-    /* Convert to lower case */
-    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-
+  for (const auto &word : normalizedWords) {
     if (std::find(WordList::English.begin(), WordList::English.end(), word) ==
         WordList::English.end()) {
       return crypto::SecretKey();
@@ -51,15 +62,15 @@ crypto::SecretKey mnemonicToPrivateKey(const std::vector<std::string> &words) {
   }
 
   /* The checksum must be correct */
-  if (!hasValidChecksum(words)) {
+  if (!hasValidChecksum(normalizedWords)) {
     return crypto::SecretKey();
   }
 
-  auto wordIndexes = getWordIndexes(words);
+  auto wordIndexes = getWordIndexes(normalizedWords);
 
   std::vector<uint8_t> data;
 
-  for (size_t i = 0; i < words.size() - 1; i += 3) {
+  for (size_t i = 0; i < normalizedWords.size() - 1; i += 3) {
     /* Take the indexes of these three words in the word list */
     const uint32_t w1 = wordIndexes[i];
     const uint32_t w2 = wordIndexes[i + 1];
