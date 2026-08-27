@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <sstream>
-#include <utility>
 
 #include "CRC32.h"
 #include "WordList.h"
@@ -39,7 +38,7 @@ crypto::SecretKey mnemonicToPrivateKey(const std::vector<std::string> &words) {
   for (const auto &word : words) {
     std::string lowerWord = word;
     std::transform(lowerWord.begin(), lowerWord.end(), lowerWord.begin(), ::tolower);
-    normalizedWords.push_back(std::move(lowerWord));
+    normalizedWords.push_back(lowerWord);
   }
 
   const size_t len = normalizedWords.size();
