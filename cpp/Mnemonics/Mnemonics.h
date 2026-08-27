@@ -3,6 +3,7 @@
 //
 // Please see the included LICENSE file for more information.
 
+#include <string>
 #include <vector>
 
 #include "../Cryptonote/CryptoTypes.h"
