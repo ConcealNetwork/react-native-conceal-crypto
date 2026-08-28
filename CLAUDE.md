@@ -16,7 +16,7 @@ npm run lint                # Biome lint (lint:fix to autofix)
 npm run format              # Biome format (format:fix to write)
 npm run check               # biome check . (check:fix to autofix)
 npm run cpp                 # clang-format check on C++ (cpp:fix to autofix)
-npm test                    # unit tests
+npm test                    # standalone C++ mnemonic codec tests (tests/, via scripts/run-cpp-tests.sh)
 ```
 
 Quality gate before completing changes: `npm run lint && npm run check && npm run cpp && npm test`.
@@ -25,7 +25,7 @@ Quality gate before completing changes: `npm run lint && npm run check && npm ru
 
 - **Biome only** (no ESLint/Prettier) for TS/JS. **C++ uses `clang-format`** (`npm run cpp`).
 - **Never hand-edit `nitrogen/generated/` or `cpp/` glue** — regenerate with `npm run nitrogen:init` after changing the Nitro spec. Hand-written source files live outside generated dirs.
-- **Full native build needs a host RN app**, not available in this library repo; `npm run lint` / `npm run check` / `npm test` are the verifiable gates here.
+- **Full native build needs a host RN app**, not available in this library repo; `npm run lint` / `npm run check` / `npm run cpp` / `npm test` are the verifiable gates here. `npm test` compiles the pure C++ mnemonic codec (`cpp/Mnemonics`) into a standalone host binary — no RN host app needed.
 - **On every `@biomejs/biome` update — follow this workflow in order:**
   1. **Plan** to update the `$schema` URL in `biome.json` to the new version in the same change. Dependabot only bumps `package.json` — it never touches `biome.json`, so this is always a manual follow-up. A stale `$schema` makes Biome emit an `info` diagnostic ("Expected X, Found Y … run `biome migrate`") on every lint run.
   2. **Before editing, check the web for the new schema:** fetch `https://biomejs.dev/schemas/<NEW_VERSION>/schema.json` and confirm it exists (HTTP 200), is valid JSON, and is a JSON Schema document (`$schema` key, non-trivial `properties`). This catches a missing/typo'd release doc and lets you diff structure for breaking changes.

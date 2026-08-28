@@ -14,8 +14,9 @@
     "format:fix": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --fix .",
-    "cpp": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format --dry-run --Werror {} + && echo Check complete!",
-    "cpp:fix": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format -i {} +"
+    "cpp": "find cpp tests -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format --dry-run --Werror {} + && echo Check complete!",
+    "cpp:fix": "find cpp tests -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format -i {} +",
+    "test": "bash scripts/run-cpp-tests.sh"
   },
   "keywords": [
     "react-native",
