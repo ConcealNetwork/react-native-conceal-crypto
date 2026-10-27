@@ -1,6 +1,8 @@
 node_modules/
 dist/
 build/
+.vscode/
+android/.gradle/
 *.log
 coverage/
 android/.cxx/
