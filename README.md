@@ -17,12 +17,14 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 ## API Reference
 
 ### Encryption & Decryption
+
 - `chacha8(input, key, iv)` - ChaCha8 stream cipher encryption
-- `chacha12(input, key, iv)` - ChaCha12 stream cipher encryption  
+- `chacha12(input, key, iv)` - ChaCha12 stream cipher encryption
 - `secretbox(message, nonce, key)` - Authenticated encryption (XSalsa20-Poly1305)
 - `secretboxOpen(ciphertext, nonce, key)` - Authenticated decryption (returns null on failure)
 
 ### Cryptonote Elliptic Curve Operations (Performance Optimized)
+
 - `cryptonote.generateKeyDerivation(publicKey, secretKey)` - Generate key derivation (32-byte ArrayBuffer) ⚡
 - `cryptonote.derivePublicKey(derivation, outputIndex, publicKey)` - Derive public key (32-byte ArrayBuffer) ⚡
 - `cryptonote.geScalarmult(publicKey, secretKey)` - Scalar multiplication (32-byte ArrayBuffer) ⚡
@@ -39,19 +41,23 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 - ⚡ **Inline functions** to reduce call overhead
 
 ### Data Conversion
+
 - `hextobin(hex)` - Convert hex string to ArrayBuffer
 - `bintohex(buffer)` - Convert ArrayBuffer to hex string
 
 ### Random Generation
+
 - `random(bits)` - Generate cryptographically secure random string
 - `randomBytes(bytes)` - Generate random bytes as ArrayBuffer
 
 ### Authentication
+
 - `hmacSha1(key, data)` - HMAC-SHA1 message authentication (RFC 2104 / FIPS 198-1, 20-byte output)
 - `hmacSha256(key, data)` - HMAC-SHA256 message authentication (RFC 4231 / FIPS 180-4, 32-byte output)
 - `hmacSha512(key, data)` - HMAC-SHA512 message authentication (RFC 4231 / FIPS 180-4, 64-byte output)
 
 ### Mnemonics (English Only)
+
 - `mnemonics.mn_encode(privateKeyHex)` - Encode a private key (64-char hex string) into a 25-word mnemonic phrase
 - `mnemonics.mn_decode(mnemonicPhrase)` - Decode a 25-word mnemonic phrase back to a private key (64-char hex string)
 
@@ -93,7 +99,12 @@ const scalarMult = concealCrypto.cryptonote.geScalarmult(publicKeyBuf, secretKey
 const pointSum = concealCrypto.cryptonote.geAdd(point1Buf, point2Buf);
 const baseMult = concealCrypto.cryptonote.geScalarmultBase(secretKeyBuf);
 const doubleMult = concealCrypto.cryptonote.geDoubleScalarmultBaseVartime(cBuf, PBuf, rBuf);
-const postcompMult = concealCrypto.cryptonote.geDoubleScalarmultPostcompVartime(rBuf, PBuf, cBuf, IBuf);
+const postcompMult = concealCrypto.cryptonote.geDoubleScalarmultPostcompVartime(
+  rBuf,
+  PBuf,
+  cBuf,
+  IBuf
+);
 
 // Convert binary to hex
 const hex = concealCrypto.bintohex(buffer);
