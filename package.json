@@ -15,7 +15,10 @@
     "check": "biome check .",
     "check:fix": "biome check --fix .",
     "cpp": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format --dry-run --Werror {} + && echo Check complete!",
-    "cpp:fix": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format -i {} +"
+    "cpp:fix": "find cpp -type f \\( -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' \\) -exec clang-format -i {} +",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:vectors": "node test/scripts/gen-chacha-vectors.mjs"
   },
   "keywords": [
     "react-native",
@@ -37,13 +40,15 @@
   "author": "Acktarius <acktarius@protonmail.com> (https://github.com/Acktarius)",
   "homepage": "https://github.com/concealnetwork/react-native-conceal-crypto#readme",
   "devDependencies": {
-    "@biomejs/biome": "^2.5.9",
+    "@biomejs/biome": "^2.6.2",
     "@types/react": "^19.1.0",
     "clang-format": "^1.8.0",
+    "conceal-lib-js": "https://github.com/ConcealNetwork/conceal-lib-js/releases/download/v0.3.6/conceal-lib-js-0.3.6.tgz",
     "nitrogen": "^0.30.2",
     "react-native": "0.82.0",
     "react-native-nitro-modules": "^0.30.2",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "^4.1.12"
   },
   "peerDependencies": {
     "react": "^19.1.0",

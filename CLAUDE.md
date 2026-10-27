@@ -9,14 +9,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 ## Commands
 
 ```bash
-npm ci                      # install deps (Node 18+)
+npm ci                      # install deps (Node 18+; Node 22+ needed for npm test)
 npm run nitrogen:init       # regenerate Nitro JSI bindings (cpp/ + nitrogen/generated/)
 npm run clean               # remove build artifacts
 npm run lint                # Biome lint (lint:fix to autofix)
 npm run format              # Biome format (format:fix to write)
 npm run check               # biome check . (check:fix to autofix)
 npm run cpp                 # clang-format check on C++ (cpp:fix to autofix)
-npm test                    # unit tests
+npm test                    # Vitest: ChaCha parity vs conceal-lib-js (native part needs `cc`), writes test/parity-report.md
+npm run test:vectors        # regenerate test/fixtures/chacha.json from conceal-lib-js
 ```
 
 Quality gate before completing changes: `npm run lint && npm run check && npm run cpp && npm test`.

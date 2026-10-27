@@ -1,8 +1,18 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
   "root": true,
   "files": {
-    "includes": ["**", "!build", "!cpp", "!nitrogen/generated"]
+    "includes": [
+      "**",
+      "!build",
+      "!cpp",
+      "!nitrogen/generated",
+      "!.claude",
+      "!.cursor",
+      "!.forge",
+      "!openspec",
+      "!test/parity-report.md"
+    ]
   },
   "formatter": {
     "enabled": true,

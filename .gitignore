@@ -12,4 +12,10 @@ android/.cxx/
 .idea/**/** */
 
 add_copyright.sh
+
+# personal agent tooling (Forge / OpenSpec)
+.forge/
+.cursor/
+.claude/
+openspec/
 .cursorrules
