@@ -1,10 +1,10 @@
 # Changelog
 
-| Version    | Breaking Changes | New Features                        | Bug Fixes  | iOS | Android |
-| ---------- | ---------------- | ----------------------------------- | ---------- | --- | ------- |
-| v0.2.4     |                  |                                     |            |     | ✅      |
-| v0.2.5     | iOS support      |                                     |            | ✅  | ✅      |
-| v0.2.6     |                  | mnemonic                            |            | ✅  | ✅      |
-| v0.2.7     |                  |                                     | versioning | ✅  | ✅      |
-| v0.2.8     |                  | metadata                            |            | ✅  | ✅      |
-| v0.3.2     |                  | IETF cypher.chacha8/12/20, argon2id |            | ✅  | ✅      |
+| Version | Breaking Changes | New Features                        | Bug Fixes  | iOS | Android |
+| ------- | ---------------- | ----------------------------------- | ---------- | --- | ------- |
+| v0.2.4  |                  |                                     |            |     | ✅      |
+| v0.2.5  | iOS support      |                                     |            | ✅  | ✅      |
+| v0.2.6  |                  | mnemonic                            |            | ✅  | ✅      |
+| v0.2.7  |                  |                                     | versioning | ✅  | ✅      |
+| v0.2.8  |                  | metadata                            |            | ✅  | ✅      |
+| v0.3.2  |                  | IETF cypher.chacha8/12/20, argon2id |            | ✅  | ✅      |
