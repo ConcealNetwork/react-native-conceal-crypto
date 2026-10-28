@@ -1,7 +1,9 @@
 /*
  * Standalone runner for the native ChaCha used by HybridConcealCrypto (no Nitro / RN).
  * Usage: chacha_parity <8|12> <key_hex> <iv_hex> <data_hex>
- * Prints the ciphertext as lowercase hex on stdout.
+ *        chacha_parity ietf <8|12|20> <key_hex> <nonce_hex> <data_hex>
+ *        chacha_parity ietf-len <rounds> <length>
+ * Prints the ciphertext as lowercase hex on stdout. IETF modes exit with -CHACHA_ERR_* on error.
  */
 
 #include <stdio.h>
@@ -9,6 +11,9 @@
 #include <string.h>
 
 #include "chacha.h"
+
+/* IETF modes only; must not collide with -CHACHA_ERR_* exit codes. */
+#define EXIT_USAGE 64
 
 static int hex_nibble(char c) {
   if (c >= '0' && c <= '9') return c - '0';
@@ -35,7 +40,54 @@ static uint8_t *from_hex(const char *hex, size_t *len) {
   return out;
 }
 
+static int run_ietf(int argc, char **argv) {
+  if (argc != 6) {
+    fprintf(stderr, "usage: %s ietf <8|12|20> <key_hex> <nonce_hex> <data_hex>\n", argv[0]);
+    return EXIT_USAGE;
+  }
+  int status;
+  size_t key_len = 0, nonce_len = 0, data_len = 0;
+  uint8_t *key = from_hex(argv[3], &key_len);
+  uint8_t *nonce = from_hex(argv[4], &nonce_len);
+  uint8_t *data = from_hex(argv[5], &data_len);
+  uint8_t *out = malloc(data_len ? data_len : 1);
+  if (!key || !nonce || !data || !out) {
+    fprintf(stderr, "invalid hex input\n");
+    status = EXIT_USAGE;
+  } else {
+    int rc = chacha_ietf_xor(data, data_len, key, key_len, nonce, nonce_len, atoi(argv[2]), out);
+    if (rc == CHACHA_OK) {
+      for (size_t i = 0; i < data_len; i++) printf("%02x", out[i]);
+      printf("\n");
+    }
+    status = -rc;
+  }
+  free(key);
+  free(nonce);
+  free(data);
+  free(out);
+  return status;
+}
+
+/* Length validation only: an accepted length is never encrypted (it may be 256 GiB). */
+static int run_ietf_len(int argc, char **argv) {
+  if (argc != 4) {
+    fprintf(stderr, "usage: %s ietf-len <rounds> <length>\n", argv[0]);
+    return EXIT_USAGE;
+  }
+  static const uint8_t key[CHACHA_KEY_SIZE];
+  static const uint8_t nonce[CHACHA_NONCE_SIZE];
+  int rounds = atoi(argv[2]);
+  size_t length = (size_t)strtoull(argv[3], NULL, 10);
+  int rc = chacha_ietf_check(length, sizeof key, sizeof nonce, rounds);
+  if (rc != CHACHA_OK)
+    rc = chacha_ietf_xor(NULL, length, key, sizeof key, nonce, sizeof nonce, rounds, NULL);
+  return -rc;
+}
+
 int main(int argc, char **argv) {
+  if (argc >= 2 && strcmp(argv[1], "ietf") == 0) return run_ietf(argc, argv);
+  if (argc >= 2 && strcmp(argv[1], "ietf-len") == 0) return run_ietf_len(argc, argv);
   if (argc != 5) {
     fprintf(stderr, "usage: %s <8|12> <key_hex> <iv_hex> <data_hex>\n", argv[0]);
     return 2;

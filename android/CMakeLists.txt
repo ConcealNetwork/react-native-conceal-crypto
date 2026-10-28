@@ -20,9 +20,11 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/HybridConcealCrypto.cpp
   ../cpp/HybridCryptonote.cpp
   ../cpp/HybridMnemonics.cpp
+  ../cpp/HybridCypher.cpp
   ../cpp/Hmac.cpp
   ../cpp/chacha8.c
   ../cpp/chacha12.c
+  ../cpp/chacha_ietf.c
   ../cpp/mn_random.cpp
   ../cpp/Cryptonote/crypto.cpp
   ../cpp/Cryptonote/crypto-ops.c

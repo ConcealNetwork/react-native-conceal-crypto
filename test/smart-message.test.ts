@@ -152,3 +152,77 @@ describe.skipIf(skipNative)('smart message RN (native) <-> conceal-lib-js', () =
     });
   });
 });
+
+describe.skipIf(skipNative)('smart message IETF (native) <-> conceal-lib-js', () => {
+  let native: ReturnType<typeof buildNative>;
+  /** 12-byte IETF nonce for a legacy 8-byte IV: 0^4 ‖ iv. */
+  const ietfNonce = (ivHex: string) => `${'00'.repeat(4)}${ivHex}`;
+  const unwrap = (res: { status: number | null; stdout: string; stderr: string }) => {
+    if (res.status !== 0) throw new Error(res.stderr);
+    return Buffer.from(res.stdout.trim(), 'hex');
+  };
+  const legacyAt =
+    (ivHex: string): Encrypt =>
+    (rounds, keyHex, data) =>
+      unwrap(native.run(rounds, keyHex, ivHex, hex(data)));
+  const ietfAt =
+    (nonceHex: string): Encrypt =>
+    (rounds, keyHex, data) =>
+      unwrap(native.exec('ietf', String(rounds), keyHex, nonceHex, hex(data)));
+  const ietf = ietfAt(ietfNonce(RN_NONCE));
+  const legacy = legacyAt(RN_NONCE);
+
+  beforeAll(() => {
+    native = buildNative();
+  });
+
+  afterAll(() => {
+    native?.cleanup();
+  });
+
+  describe.each(messages.map((m) => [m.name, m] as const))('%s', (_, m) => {
+    const framed = frame(m.body);
+
+    it('IETF encrypt -> lib decrypt', () => {
+      const ct = ietf(m.rounds, messageKey, framed);
+      expect(hex(lib(m.rounds, messageKey, ct))).toBe(hex(framed));
+      expect(appDecrypt(lib, messageKey, ct)).toBe(m.body);
+    });
+
+    it('lib encrypt -> IETF decrypt', () => {
+      const ct = lib(m.rounds, messageKey, framed);
+      expect(hex(ietf(m.rounds, messageKey, ct))).toBe(hex(framed));
+      expect(appDecrypt(ietf, messageKey, ct)).toBe(m.body);
+    });
+
+    it('IETF, legacy and lib ciphertexts are identical', () => {
+      const ct = hex(ietf(m.rounds, messageKey, framed));
+      expect(ct).toBe(hex(legacy(m.rounds, messageKey, framed)));
+      expect(ct).toBe(hex(lib(m.rounds, messageKey, framed)));
+    });
+
+    it('IETF encrypt -> IETF decrypt', () => {
+      const ct = ietf(m.rounds, messageKey, framed);
+      expect(ct.length).toBe(framed.length);
+      expect(appDecrypt(ietf, messageKey, ct)).toBe(m.body);
+    });
+  });
+
+  it('message index 1: IETF, legacy and lib ciphertexts are identical', () => {
+    const m = messages[0];
+    const framed = frame(m.body);
+    const iv = Buffer.alloc(8);
+    iv.writeBigUInt64BE(1n);
+    const libNonce = new Uint8Array(12);
+    libNonce[11] = 1;
+    const libCt = cypher[m.rounds === 8 ? 'chacha8' : 'chacha12'](
+      Buffer.from(messageKey, 'hex'),
+      libNonce,
+      framed
+    );
+    const ct = hex(ietfAt(ietfNonce(hex(iv)))(m.rounds, messageKey, framed));
+    expect(ct).toBe(hex(legacyAt(hex(iv))(m.rounds, messageKey, framed)));
+    expect(ct).toBe(hex(libCt));
+    expect(ct).not.toBe(hex(ietf(m.rounds, messageKey, framed)));
+  });
+});

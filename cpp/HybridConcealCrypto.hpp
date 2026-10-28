@@ -14,6 +14,7 @@
 #include "../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.hpp"
 #include "Hmac.hpp"
 #include "HybridCryptonote.hpp"
+#include "HybridCypher.hpp"
 #include "HybridMnemonics.hpp"
 
 namespace margelo::nitro::concealcrypto {
@@ -54,9 +55,13 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   // Mnemonics property getter
   std::shared_ptr<HybridMnemonicsSpec> getMnemonics() override;
 
+  // Cypher property getter
+  std::shared_ptr<HybridCypherSpec> getCypher() override;
+
  private:
   std::shared_ptr<HybridCryptonoteSpec> _cryptonote;
   std::shared_ptr<HybridMnemonicsSpec> _mnemonics;
+  std::shared_ptr<HybridCypherSpec> _cypher;
 };
 
 }  // namespace margelo::nitro::concealcrypto

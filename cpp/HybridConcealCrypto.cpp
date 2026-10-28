@@ -27,13 +27,15 @@ constexpr auto TAG = "ConcealCrypto";
 
 /**
  * Constructor — must call HybridObject(TAG) base constructor.
- * Initialize the cryptonote and mnemonics sub-objects.
+ * Initialize the cryptonote, mnemonics and cypher sub-objects.
  */
 HybridConcealCrypto::HybridConcealCrypto() : HybridObject(TAG) {
   // Initialize cryptonote sub-object
   _cryptonote = std::make_shared<HybridCryptonote>();
   // Initialize mnemonics sub-object
   _mnemonics = std::make_shared<HybridMnemonics>();
+  // Initialize cypher sub-object
+  _cypher = std::make_shared<HybridCypher>();
 }
 
 /**
@@ -258,3 +260,8 @@ std::shared_ptr<HybridCryptonoteSpec> HybridConcealCrypto::getCryptonote() { ret
  * Get the Mnemonics sub-object for mnemonic encoding/decoding operations
  */
 std::shared_ptr<HybridMnemonicsSpec> HybridConcealCrypto::getMnemonics() { return _mnemonics; }
+
+/**
+ * Get the Cypher sub-object for IETF ChaCha operations
+ */
+std::shared_ptr<HybridCypherSpec> HybridConcealCrypto::getCypher() { return _cypher; }

@@ -10,7 +10,7 @@ export const hasCc = spawnSync('cc', ['--version']).status === 0;
 export const skipNative = !hasCc && !process.env.CI;
 if (skipNative) console.warn('cc not found: native ChaCha parity/interop tests SKIPPED');
 
-/** Compiles test/native/chacha_parity.c with cpp/chacha8.c + cpp/chacha12.c (no Nitro). */
+/** Compiles test/native/chacha_parity.c with cpp/chacha8.c + cpp/chacha12.c + cpp/chacha_ietf.c (no Nitro). */
 export function buildNative() {
   const dir = mkdtempSync(join(tmpdir(), 'chacha-parity-'));
   const bin = join(dir, 'chacha_parity');
@@ -23,6 +23,7 @@ export function buildNative() {
       join(root, 'test/native/chacha_parity.c'),
       join(root, 'cpp/chacha8.c'),
       join(root, 'cpp/chacha12.c'),
+      join(root, 'cpp/chacha_ietf.c'),
       '-o',
       bin,
     ],
@@ -32,6 +33,7 @@ export function buildNative() {
   return {
     run: (rounds: 8 | 12, keyHex: string, ivHex: string, dataHex: string) =>
       spawnSync(bin, [String(rounds), keyHex, ivHex, dataHex], { encoding: 'utf8' }),
+    exec: (...args: string[]) => spawnSync(bin, args, { encoding: 'utf8' }),
     cleanup: () => rmSync(dir, { recursive: true, force: true }),
   };
 }

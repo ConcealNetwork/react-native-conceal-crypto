@@ -23,6 +23,14 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 - `secretbox(message, nonce, key)` - Authenticated encryption (XSalsa20-Poly1305)
 - `secretboxOpen(ciphertext, nonce, key)` - Authenticated decryption (returns null on failure)
 
+### IETF ChaCha (`cypher`)
+
+- `cypher.chacha8(key, nonce, data)` - ChaCha8 (IETF, 32-byte key, 12-byte nonce), same as conceal-lib-js
+- `cypher.chacha12(key, nonce, data)` - ChaCha12 (IETF, 32-byte key, 12-byte nonce), same as conceal-lib-js
+- `cypher.chacha20(key, nonce, data)` - ChaCha20 (IETF, 32-byte key, 12-byte nonce), same as conceal-lib-js
+
+**Note:** Legacy `chacha8/chacha12(input, key, iv)` use the djb layout with an 8-byte IV; `cypher.*` with nonce `00000000 ‖ iv` gives identical output. See [doc/chacha-ietf-migration.md](doc/chacha-ietf-migration.md).
+
 ### Cryptonote Elliptic Curve Operations (Performance Optimized)
 
 - `cryptonote.generateKeyDerivation(publicKey, secretKey)` - Generate key derivation (32-byte ArrayBuffer) ⚡
@@ -81,6 +89,9 @@ const buffer = concealCrypto.hextobin('deadbeef');
 
 // Encrypt data with ChaCha8
 const encrypted = concealCrypto.chacha8(input, key, iv);
+
+// Encrypt data with IETF ChaCha8 (12-byte nonce)
+const encryptedIetf = concealCrypto.cypher.chacha8(key, nonce, input);
 
 // Authenticated encryption with libsodium
 const ciphertext = concealCrypto.secretbox(message, nonce, key);

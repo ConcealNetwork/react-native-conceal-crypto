@@ -88,3 +88,35 @@ const fixture = {
 
 writeFileSync(out, `${JSON.stringify(fixture, null, 2)}\n`);
 console.log(`wrote ${cases.length} cases to ${out}`);
+
+const ietfOut = join(here, '..', 'fixtures', 'chacha-ietf.json');
+const ietfNonces = [
+  { id: 'zero', nonce: new Uint8Array(12) },
+  ...indexes.map(({ index }) => ({ id: `be-${index}`, nonce: be12(index) })),
+  { id: 'random', nonce: Buffer.from('a1b2c3d4e5f60718293a4b5c', 'hex') },
+];
+
+const ietfCases = [];
+for (const cipher of ciphers) {
+  for (const { id, nonce } of ietfNonces) {
+    for (const pt of Object.values(plaintexts)) {
+      ietfCases.push({
+        id,
+        cipher,
+        key: hex(key),
+        nonce: hex(nonce),
+        plaintext: hex(pt),
+        ciphertext: hex(cypher[cipher](key, nonce, pt)),
+      });
+    }
+  }
+}
+
+const ietfFixture = {
+  generator: 'test/scripts/gen-chacha-vectors.mjs',
+  oracle: `conceal-lib-js@${libVersion} cypher.* (IETF: 12-byte nonce, 32-bit counter)`,
+  cases: ietfCases,
+};
+
+writeFileSync(ietfOut, `${JSON.stringify(ietfFixture, null, 2)}\n`);
+console.log(`wrote ${ietfCases.length} cases to ${ietfOut}`);
