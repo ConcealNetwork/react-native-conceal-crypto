@@ -14,6 +14,7 @@
 #include "../nitrogen/generated/shared/c++/HybridConcealCryptoSpec.hpp"
 #include "Hmac.hpp"
 #include "HybridCryptonote.hpp"
+#include "HybridCypher.hpp"
 #include "HybridMnemonics.hpp"
 
 namespace margelo::nitro::concealcrypto {
@@ -47,6 +48,9 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(
       const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce,
       const std::shared_ptr<ArrayBuffer>& key) override;
+  std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> argon2id(
+      const std::shared_ptr<ArrayBuffer>& password, const std::shared_ptr<ArrayBuffer>& salt,
+      double memoryKiB, double iterations, double parallelism) override;
 
   // Cryptonote property getter
   std::shared_ptr<HybridCryptonoteSpec> getCryptonote() override;
@@ -54,9 +58,13 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   // Mnemonics property getter
   std::shared_ptr<HybridMnemonicsSpec> getMnemonics() override;
 
+  // Cypher property getter
+  std::shared_ptr<HybridCypherSpec> getCypher() override;
+
  private:
   std::shared_ptr<HybridCryptonoteSpec> _cryptonote;
   std::shared_ptr<HybridMnemonicsSpec> _mnemonics;
+  std::shared_ptr<HybridCypherSpec> _cypher;
 };
 
 }  // namespace margelo::nitro::concealcrypto

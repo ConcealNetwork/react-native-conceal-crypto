@@ -1,6 +1,8 @@
 node_modules/
 dist/
 build/
+.vscode/
+android/.gradle/
 *.log
 coverage/
 android/.cxx/
@@ -10,4 +12,10 @@ android/.cxx/
 .idea/**/** */
 
 add_copyright.sh
+
+# personal agent tooling (Forge / OpenSpec)
+.forge/
+.cursor/
+.claude/
+openspec/
 .cursorrules
