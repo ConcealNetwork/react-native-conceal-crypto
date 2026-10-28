@@ -26,7 +26,8 @@ The 12-byte nonce is **4 zero bytes followed by the 8-byte big-endian message in
 (`0^4 ‖ BE64(index)`):
 
 ```typescript
-if (!Number.isSafeInteger(index) || index < 0) throw new RangeError(`invalid message index: ${index}`);
+if (!Number.isSafeInteger(index) || index < 0)
+  throw new RangeError(`invalid message index: ${index}`);
 const nonceBuffer = new ArrayBuffer(12); // zero-filled
 new DataView(nonceBuffer).setBigUint64(4, BigInt(index), false); // false = big-endian
 ```
@@ -99,7 +100,8 @@ const nativeResult8 = concealCrypto.chacha8(inputBuffer, keyBuffer, nonceBuffer)
 After (keep `nonceBuffer` for the JS fallback):
 
 ```typescript
-if (!Number.isSafeInteger(index) || index < 0) throw new RangeError(`invalid message index: ${index}`);
+if (!Number.isSafeInteger(index) || index < 0)
+  throw new RangeError(`invalid message index: ${index}`);
 const ietfNonce = new ArrayBuffer(12);
 new DataView(ietfNonce).setBigUint64(4, BigInt(index), false); // 0^4 ‖ BE64(index)
 
