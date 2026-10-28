@@ -15,6 +15,12 @@ jobs:
           node-version: 22
           cache: "npm"
 
+      # Native Vitest harness: argon2id links -lsodium; bridge compile needs <sodium.h> + clang++.
+      - name: Install native test deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsodium-dev clang
+
       - run: npm ci
       # image-size (via Metro/RN) has no patched release as of 2026-08-18
       # (GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq; all versions <=2.0.2).
