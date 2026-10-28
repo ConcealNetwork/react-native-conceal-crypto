@@ -29,6 +29,7 @@ namespace NitroModules { class ArrayBuffer; }
 #include <NitroModules/ArrayBuffer.hpp>
 #include <string>
 #include <optional>
+#include <NitroModules/Promise.hpp>
 
 namespace margelo::nitro::concealcrypto {
 
@@ -76,6 +77,7 @@ namespace margelo::nitro::concealcrypto {
       virtual std::shared_ptr<ArrayBuffer> randomBytes(double bytes) = 0;
       virtual std::shared_ptr<ArrayBuffer> secretbox(const std::shared_ptr<ArrayBuffer>& message, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) = 0;
       virtual std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce, const std::shared_ptr<ArrayBuffer>& key) = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> argon2id(const std::shared_ptr<ArrayBuffer>& password, const std::shared_ptr<ArrayBuffer>& salt, double memoryKiB, double iterations, double parallelism) = 0;
 
     protected:
       // Hybrid Setup

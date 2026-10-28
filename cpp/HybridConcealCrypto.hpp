@@ -48,6 +48,9 @@ class HybridConcealCrypto : public HybridConcealCryptoSpec {
   std::optional<std::shared_ptr<ArrayBuffer>> secretboxOpen(
       const std::shared_ptr<ArrayBuffer>& ciphertext, const std::shared_ptr<ArrayBuffer>& nonce,
       const std::shared_ptr<ArrayBuffer>& key) override;
+  std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> argon2id(
+      const std::shared_ptr<ArrayBuffer>& password, const std::shared_ptr<ArrayBuffer>& salt,
+      double memoryKiB, double iterations, double parallelism) override;
 
   // Cryptonote property getter
   std::shared_ptr<HybridCryptonoteSpec> getCryptonote() override;

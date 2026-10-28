@@ -31,6 +31,12 @@ Includes both basic encryption and advanced elliptic curve cryptography.
 
 **Note:** Legacy `chacha8/chacha12(input, key, iv)` use the djb layout with an 8-byte IV; `cypher.*` with nonce `00000000 ‖ iv` gives identical output. See [doc/chacha-ietf-migration.md](doc/chacha-ietf-migration.md).
 
+### Key derivation (Argon2id)
+
+- `argon2id(password, salt, memoryKiB, iterations, parallelism)` - Argon2id v1.3 (RFC 9106), returns `Promise<ArrayBuffer>` (32 bytes), same as conceal-lib-js `crypto.argon2id` (raw bytes instead of hex)
+
+**Note:** Supported subset: salt exactly 16 bytes, `parallelism` 1, password ≤ 1024 bytes, `memoryKiB` 8–65536, `iterations` 1–64. Runs on a background thread, one derivation at a time. Invalid values reject the promise; wrong-typed arguments throw synchronously. See [doc/argon2id-envelope-migration.md](doc/argon2id-envelope-migration.md).
+
 ### Cryptonote Elliptic Curve Operations (Performance Optimized)
 
 - `cryptonote.generateKeyDerivation(publicKey, secretKey)` - Generate key derivation (32-byte ArrayBuffer) ⚡
@@ -96,6 +102,9 @@ const encryptedIetf = concealCrypto.cypher.chacha8(key, nonce, input);
 // Authenticated encryption with libsodium
 const ciphertext = concealCrypto.secretbox(message, nonce, key);
 const decrypted = concealCrypto.secretboxOpen(ciphertext, nonce, key);
+
+// Derive a 32-byte key with Argon2id (16-byte salt, off the JS thread)
+const derivedKeyBuf = await concealCrypto.argon2id(passwordBuf, saltBuf, 32768, 3, 1);
 
 // Generate random data
 const randomStr = concealCrypto.random(256);

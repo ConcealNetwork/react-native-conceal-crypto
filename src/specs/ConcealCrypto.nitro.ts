@@ -28,6 +28,22 @@ export interface ConcealCrypto extends HybridObject<{ ios: 'c++'; android: 'c++'
   randomBytes(bytes: number): ArrayBuffer;
   secretbox(message: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer;
   secretboxOpen(ciphertext: ArrayBuffer, nonce: ArrayBuffer, key: ArrayBuffer): ArrayBuffer | null;
+  /**
+   * Argon2id v1.3 (RFC 9106), byte-identical to conceal-lib-js `crypto.argon2id` for the same
+   * bytes and costs; same argument order, but raw bytes instead of hex. Resolves to a 32-byte key.
+   * Supported subset (every wallet Envelope 3 profile): salt exactly 16 bytes, `parallelism` 1,
+   * password ≤ 1024 bytes, `memoryKiB` 8–65536, `iterations` 1–64; values are never clamped.
+   * Runs on a background thread, one derivation at a time. Invalid values (buffer sizes,
+   * out-of-range or non-integer costs) and derivation failures reject the promise; wrong-typed
+   * arguments are type errors thrown synchronously by the binding layer.
+   */
+  argon2id(
+    password: ArrayBuffer,
+    salt: ArrayBuffer,
+    memoryKiB: number,
+    iterations: number,
+    parallelism: number
+  ): Promise<ArrayBuffer>;
 
   // Cryptonote elliptic curve operations
   readonly cryptonote: Cryptonote;

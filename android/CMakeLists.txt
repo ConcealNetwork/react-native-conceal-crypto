@@ -25,6 +25,7 @@ add_library(${PACKAGE_NAME} SHARED
   ../cpp/chacha8.c
   ../cpp/chacha12.c
   ../cpp/chacha_ietf.c
+  ../cpp/argon2id_kdf.c
   ../cpp/mn_random.cpp
   ../cpp/Cryptonote/crypto.cpp
   ../cpp/Cryptonote/crypto-ops.c
