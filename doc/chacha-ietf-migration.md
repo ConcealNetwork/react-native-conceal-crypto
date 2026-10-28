@@ -26,9 +26,14 @@ The 12-byte nonce is **4 zero bytes followed by the 8-byte big-endian message in
 (`0^4 ‖ BE64(index)`):
 
 ```typescript
+if (!Number.isSafeInteger(index) || index < 0) throw new RangeError(`invalid message index: ${index}`);
 const nonceBuffer = new ArrayBuffer(12); // zero-filled
 new DataView(nonceBuffer).setBigUint64(4, BigInt(index), false); // false = big-endian
 ```
+
+The guard matters: `setBigUint64` silently wraps a negative index (`-1` becomes
+`2^64 − 1`), which yields a valid nonce and wrong plaintext instead of an error. Native
+`cypher.*` cannot catch this because it only sees the 12-byte nonce.
 
 > **Do not** build it as `BE64(index) ‖ 0^4` (for example `new Uint8Array(12).set(iv8)`,
 > or `setBigUint64(0, …)` on a 12-byte buffer). That layout matches the legacy output only
@@ -94,6 +99,7 @@ const nativeResult8 = concealCrypto.chacha8(inputBuffer, keyBuffer, nonceBuffer)
 After (keep `nonceBuffer` for the JS fallback):
 
 ```typescript
+if (!Number.isSafeInteger(index) || index < 0) throw new RangeError(`invalid message index: ${index}`);
 const ietfNonce = new ArrayBuffer(12);
 new DataView(ietfNonce).setBigUint64(4, BigInt(index), false); // 0^4 ‖ BE64(index)
 
@@ -134,3 +140,4 @@ ChaCha12 has no JS fallback today.
 - [ ] Send create and delete smart messages, then read them back.
 - [ ] Cross-check one message against conceal-lib-js / conceal-wallet-sdk (same key, nonce, and ciphertext).
 - [ ] If available, decrypt a message with index 1 (a second message extra in one transaction).
+- [ ] On device, confirm `cypher.chacha8` with an 8-byte nonce throws a JS `Error` ("chacha8: nonce must be 12 bytes") rather than crashing.
