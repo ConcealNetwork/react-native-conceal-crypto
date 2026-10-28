@@ -7,4 +7,4 @@
 | v0.2.6     |                  | mnemonic                            |            | ✅  | ✅      |
 | v0.2.7     |                  |                                     | versioning | ✅  | ✅      |
 | v0.2.8     |                  | metadata                            |            | ✅  | ✅      |
-| Unreleased |                  | IETF cypher.chacha8/12/20, argon2id |            | ✅  | ✅      |
+| v0.3.2     |                  | IETF cypher.chacha8/12/20, argon2id |            | ✅  | ✅      |
