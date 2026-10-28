@@ -10,12 +10,16 @@
 
 #include <sodium.h>
 
+#include <cmath>
+#include <cstdint>
 #include <iomanip>
+#include <mutex>
 #include <sstream>
 #include <stdexcept>
 
 #include "HybridCryptonote.hpp"
 #include "HybridMnemonics.hpp"
+#include "argon2id_kdf.h"
 #include "chacha.h"
 #include "mn_random.h"
 
@@ -27,13 +31,15 @@ constexpr auto TAG = "ConcealCrypto";
 
 /**
  * Constructor — must call HybridObject(TAG) base constructor.
- * Initialize the cryptonote and mnemonics sub-objects.
+ * Initialize the cryptonote, mnemonics and cypher sub-objects.
  */
 HybridConcealCrypto::HybridConcealCrypto() : HybridObject(TAG) {
   // Initialize cryptonote sub-object
   _cryptonote = std::make_shared<HybridCryptonote>();
   // Initialize mnemonics sub-object
   _mnemonics = std::make_shared<HybridMnemonics>();
+  // Initialize cypher sub-object
+  _cypher = std::make_shared<HybridCypher>();
 }
 
 /**
@@ -250,6 +256,77 @@ std::optional<std::shared_ptr<ArrayBuffer>> HybridConcealCrypto::secretboxOpen(
 }
 
 /**
+ * Argon2id v0x13 key derivation (32-byte key), validated on the JS thread, derived off-thread.
+ * This method never throws: every failure rejects the returned promise (wrong JS argument types
+ * are thrown earlier by Nitro's argument conversion).
+ */
+std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> HybridConcealCrypto::argon2id(
+    const std::shared_ptr<ArrayBuffer>& password, const std::shared_ptr<ArrayBuffer>& salt,
+    double memoryKiB, double iterations, double parallelism) {
+  using KeyPromise = Promise<std::shared_ptr<ArrayBuffer>>;
+  auto reject = [](const char* message) {
+    return KeyPromise::rejected(std::make_exception_ptr(std::invalid_argument(message)));
+  };
+  auto isUint32 = [](double x) {
+    return std::isfinite(x) && std::floor(x) == x && x >= 0 && x <= UINT32_MAX;
+  };
+
+  if (!password || !salt) return reject("argon2id: password and salt must not be null");
+  if (!isUint32(memoryKiB)) return reject("argon2id: memoryKiB must be an integer");
+  if (!isUint32(iterations)) return reject("argon2id: iterations must be an integer");
+  if (!isUint32(parallelism)) return reject("argon2id: parallelism must be an integer");
+  const auto m = static_cast<uint32_t>(memoryKiB);
+  const auto t = static_cast<uint32_t>(iterations);
+  const auto p = static_cast<uint32_t>(parallelism);
+
+  switch (argon2id_check(password->size(), salt->size(), m, t, p)) {
+    case ARGON2ID_OK:
+      break;
+    case ARGON2ID_ERR_PASSWORD:
+      return reject("argon2id: password must be at most 1024 bytes");
+    case ARGON2ID_ERR_SALT:
+      return reject("argon2id: salt must be 16 bytes (other lengths not supported)");
+    case ARGON2ID_ERR_PARALLELISM:
+      return reject("argon2id: parallelism must be 1 (other values not supported)");
+    case ARGON2ID_ERR_ITERATIONS:
+      return reject("argon2id: iterations must be 1 to 64");
+    case ARGON2ID_ERR_MEMORY:
+      return reject("argon2id: memoryKiB must be 8 to 65536");
+    default:
+      return KeyPromise::rejected(std::make_exception_ptr(std::runtime_error("argon2id: failed")));
+  }
+
+  // JS-owned buffers expire when this call returns; the worker needs its own copies.
+  auto copyBytes = [](const std::shared_ptr<ArrayBuffer>& buffer) {
+    auto bytes = std::make_shared<std::vector<uint8_t>>();
+    if (buffer->size() > 0) {
+      const uint8_t* data = static_cast<const uint8_t*>(buffer->data());
+      bytes->assign(data, data + buffer->size());
+    }
+    return bytes;
+  };
+  auto pw = copyBytes(password);
+  auto saltBytes = copyBytes(salt);
+
+  return KeyPromise::async([pw, saltBytes, m, t, p]() -> std::shared_ptr<ArrayBuffer> {
+    static std::mutex argon2idMutex;
+    std::lock_guard<std::mutex> lock(argon2idMutex);
+
+    uint8_t key[ARGON2ID_KEY_SIZE];
+    struct KeyWipe {
+      uint8_t* bytes;
+      ~KeyWipe() { sodium_memzero(bytes, ARGON2ID_KEY_SIZE); }
+    } keyWipe{key};
+    int rc =
+        argon2id_derive(pw->data(), pw->size(), saltBytes->data(), saltBytes->size(), m, t, p, key);
+    if (!pw->empty()) sodium_memzero(pw->data(), pw->size());
+    if (rc != ARGON2ID_OK) throw std::runtime_error("argon2id: derivation failed");
+
+    return ArrayBuffer::copy(key, ARGON2ID_KEY_SIZE);
+  });
+}
+
+/**
  * Get the Cryptonote sub-object for elliptic curve operations
  */
 std::shared_ptr<HybridCryptonoteSpec> HybridConcealCrypto::getCryptonote() { return _cryptonote; }
@@ -258,3 +335,8 @@ std::shared_ptr<HybridCryptonoteSpec> HybridConcealCrypto::getCryptonote() { ret
  * Get the Mnemonics sub-object for mnemonic encoding/decoding operations
  */
 std::shared_ptr<HybridMnemonicsSpec> HybridConcealCrypto::getMnemonics() { return _mnemonics; }
+
+/**
+ * Get the Cypher sub-object for IETF ChaCha operations
+ */
+std::shared_ptr<HybridCypherSpec> HybridConcealCrypto::getCypher() { return _cypher; }

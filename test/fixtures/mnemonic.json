@@ -1,0 +1,76 @@
+{
+  "generator": "test/scripts/gen-mnemonic-vectors.mjs",
+  "oracle": "conceal-lib-js@0.3.6 mnemonic.mn_encode/mn_decode (english)",
+  "cases": [
+    {
+      "key": "0000000000000000000000000000000000000000000000000000000000000000",
+      "mnemonic": "abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey abbey"
+    },
+    {
+      "key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mnemonic": "directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow tomorrow"
+    },
+    {
+      "key": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "mnemonic": "vexed enjoy pigment films adept voted vexed enjoy pigment films adept voted vexed enjoy pigment films adept voted vexed enjoy pigment films adept voted films"
+    },
+    {
+      "key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "mnemonic": "foamy solved soggy foamy solved soggy foamy solved soggy foamy solved soggy foamy solved soggy foamy solved soggy foamy solved soggy foamy solved soggy soggy"
+    },
+    {
+      "key": "c0ffee00112233445566778899aabbccddeeff00112233445566778899aabbcc",
+      "mnemonic": "torch snake soapy biplane twice cigar sneeze september firm laboratory payment jetting huge rugged rustled biplane twice cigar sneeze september firm laboratory payment jetting september"
+    },
+    {
+      "key": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "mnemonic": "baby jagged haystack baby jagged haystack baby jagged haystack baby jagged haystack baby jagged haystack baby jagged haystack baby jagged haystack baby jagged haystack haystack"
+    }
+  ],
+  "rejects": {
+    "encode": [
+      {
+        "id": "short-hex",
+        "hex": "ab",
+        "note": "not 64 hex chars"
+      },
+      {
+        "id": "odd-hex",
+        "hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "note": "odd length"
+      },
+      {
+        "id": "non-hex",
+        "hex": "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+        "note": "invalid hex digit"
+      }
+    ],
+    "decode": [
+      {
+        "id": "too-few",
+        "phrase": "directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow",
+        "note": "24 words"
+      },
+      {
+        "id": "too-many",
+        "phrase": "directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow tomorrow abbey",
+        "note": "26 words"
+      },
+      {
+        "id": "unknown-word",
+        "phrase": "notaword dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow tomorrow",
+        "note": "word not in English list"
+      },
+      {
+        "id": "bad-checksum",
+        "phrase": "directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow directed dime tomorrow abbey",
+        "note": "checksum word wrong"
+      },
+      {
+        "id": "empty",
+        "phrase": "",
+        "note": "empty phrase"
+      }
+    ]
+  }
+}

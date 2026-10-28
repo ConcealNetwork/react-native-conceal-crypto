@@ -43,6 +43,21 @@ void chacha12_xor(const uint8_t *data, size_t length, const uint8_t *key, const 
 void chacha8(const void *data, size_t length, const uint8_t *key, const uint8_t *iv, char *cipher);
 void chacha12(const void *data, size_t length, const uint8_t *key, const uint8_t *iv, char *cipher);
 
+#define CHACHA_OK 0
+#define CHACHA_ERR_KEY (-1)
+#define CHACHA_ERR_NONCE (-2)
+#define CHACHA_ERR_ROUNDS (-3)
+#define CHACHA_ERR_LENGTH (-4)
+
+/* Argument validation used by chacha_ietf_xor: key 32, nonce 12, rounds 8/12/20,
+ * length <= 2^32 blocks. Returns CHACHA_OK or CHACHA_ERR_*. */
+int chacha_ietf_check(size_t length, size_t key_len, size_t nonce_len, int rounds);
+
+/* IETF ChaCha (RFC 8439 layout): 12-byte nonce, 32-bit block counter from 0, 8/12/20 rounds.
+ * All arguments are validated before data is read; returns CHACHA_OK or CHACHA_ERR_*. */
+int chacha_ietf_xor(const uint8_t *data, size_t length, const uint8_t *key, size_t key_len,
+                    const uint8_t *nonce, size_t nonce_len, int rounds, uint8_t *out);
+
 #ifdef __cplusplus
 }
 #endif

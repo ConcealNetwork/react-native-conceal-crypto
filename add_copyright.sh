@@ -4,10 +4,11 @@
 add_copyright() {
     local file="$1"
     local temp_file=$(mktemp)
+    year=$(date +%Y)
     
-    cat > "$temp_file" << 'EOF'
+    cat > "$temp_file" << EOF
 /*
- * Copyright (c) 2025 Acktarius, Conceal Devs
+ * Copyright (c) 2025 - $year Acktarius, Conceal Devs
  * 
  * This file is part of react-native-conceal-crypto.
  * 
@@ -23,8 +24,12 @@ EOF
 }
 
 # Add copyright to C++ files
+add_copyright "cpp/argon2id_kdf.c"
+add_copyright "cpp/argon2id_kdf.h"
 add_copyright "cpp/HybridConcealCrypto.cpp"
 add_copyright "cpp/HybridConcealCrypto.hpp"
+add_copyright "cpp/HybridCypher.cpp"
+add_copyright "cpp/HybridCypher.hpp"
 add_copyright "cpp/chacha8.h"
 add_copyright "cpp/chacha8.c"
 add_copyright "cpp/int-util.h"

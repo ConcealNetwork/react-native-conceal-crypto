@@ -16,6 +16,7 @@ namespace margelo::nitro::concealcrypto {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("cryptonote", &HybridConcealCryptoSpec::getCryptonote);
       prototype.registerHybridGetter("mnemonics", &HybridConcealCryptoSpec::getMnemonics);
+      prototype.registerHybridGetter("cypher", &HybridConcealCryptoSpec::getCypher);
       prototype.registerHybridMethod("hextobin", &HybridConcealCryptoSpec::hextobin);
       prototype.registerHybridMethod("bintohex", &HybridConcealCryptoSpec::bintohex);
       prototype.registerHybridMethod("bin2base64", &HybridConcealCryptoSpec::bin2base64);
@@ -29,6 +30,7 @@ namespace margelo::nitro::concealcrypto {
       prototype.registerHybridMethod("randomBytes", &HybridConcealCryptoSpec::randomBytes);
       prototype.registerHybridMethod("secretbox", &HybridConcealCryptoSpec::secretbox);
       prototype.registerHybridMethod("secretboxOpen", &HybridConcealCryptoSpec::secretboxOpen);
+      prototype.registerHybridMethod("argon2id", &HybridConcealCryptoSpec::argon2id);
     });
   }
 

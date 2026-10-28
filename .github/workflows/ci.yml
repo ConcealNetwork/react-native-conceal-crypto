@@ -6,14 +6,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 18
-          cache: 'npm'
+          node-version: 22
+          cache: "npm"
+
+      # Native Vitest harness: argon2id links -lsodium; bridge compile needs <sodium.h> + clang++.
+      - name: Install native test deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsodium-dev clang
 
       - run: npm ci
       # image-size (via Metro/RN) has no patched release as of 2026-08-18
@@ -26,7 +32,7 @@ jobs:
       - run: npm run format
       - run: npm run check
       - run: npm run cpp
+      - run: npm test
 
       - name: Print job summary
         run: echo "Check the Actions tab for details. Fix any failures before pushing again." >> $GITHUB_STEP_SUMMARY
-
