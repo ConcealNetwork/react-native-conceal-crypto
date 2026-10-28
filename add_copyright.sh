@@ -7,7 +7,7 @@ add_copyright() {
     
     cat > "$temp_file" << 'EOF'
 /*
- * Copyright (c) 2025 Acktarius, Conceal Devs
+ * Copyright (c) 2025 - 2026 Acktarius, Conceal Devs
  * 
  * This file is part of react-native-conceal-crypto.
  * 
