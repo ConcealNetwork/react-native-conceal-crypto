@@ -71,3 +71,34 @@ export function buildArgon2id() {
     cleanup: () => rmSync(dir, { recursive: true, force: true }),
   };
 }
+
+const cxxProbe = spawnSync('c++', ['--version']);
+export const hasCxx = cxxProbe.status === 0;
+/** Same CI rule as skipNative: a missing C++ compiler fails CI instead of skipping. */
+export const skipMnemonic = !hasCxx && !process.env.CI;
+if (skipMnemonic) console.warn('c++ not found: native mnemonic tests SKIPPED');
+
+/** Compiles test/native/mnemonic_runner.cpp with cpp/Mnemonics (no Nitro). */
+export function buildMnemonic() {
+  const dir = mkdtempSync(join(tmpdir(), 'mnemonic-runner-'));
+  const bin = join(dir, 'mnemonic_runner');
+  const build = spawnSync(
+    'c++',
+    [
+      '-std=c++17',
+      '-O2',
+      `-I${join(root, 'cpp')}`,
+      join(root, 'test/native/mnemonic_runner.cpp'),
+      join(root, 'cpp/Mnemonics/Mnemonics.cpp'),
+      join(root, 'cpp/Mnemonics/CRC32.cpp'),
+      '-o',
+      bin,
+    ],
+    { encoding: 'utf8' }
+  );
+  if (build.status !== 0) throw new Error(`native mnemonic build failed:\n${build.stderr}`);
+  return {
+    exec: (...args: string[]) => spawnSync(bin, args, { encoding: 'utf8' }),
+    cleanup: () => rmSync(dir, { recursive: true, force: true }),
+  };
+}
