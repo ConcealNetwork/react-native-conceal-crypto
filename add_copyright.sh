@@ -25,6 +25,8 @@ EOF
 # Add copyright to C++ files
 add_copyright "cpp/HybridConcealCrypto.cpp"
 add_copyright "cpp/HybridConcealCrypto.hpp"
+add_copyright "cpp/HybridCypher.cpp"
+add_copyright "cpp/HybridCypher.hpp"
 add_copyright "cpp/chacha8.h"
 add_copyright "cpp/chacha8.c"
 add_copyright "cpp/int-util.h"
