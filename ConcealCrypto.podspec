@@ -80,7 +80,7 @@ Pod::Spec.new do |s|
   # C++ implementation files (matching CMakeLists.txt structure)
   s.source_files = [
     'cpp/**/*.{h,hpp,cpp,c,mm}',
-    'ios/libsodium-1.0.20/src/libsodium/**/*.{h,c}',
+    "ios/libsodium-#{libsodium_version}/src/libsodium/**/*.{h,c}",
   ]
 
   # iOS-specific compiler settings (set BEFORE nitrogen autolinking)
