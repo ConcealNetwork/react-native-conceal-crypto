@@ -1,6 +1,11 @@
 require 'json'
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
+# Single source of truth for the pinned libsodium release (prepare_command,
+# source_files, and HEADER_SEARCH_PATHS all interpolate this).
+libsodium_version = '1.0.20'
+libsodium_sha256 = 'ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19'
+
 Pod::UI.puts "[ConcealCrypto] 🔐 Cryptonote crypto powered by C++"
 
 Pod::Spec.new do |s|
@@ -15,6 +20,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => package['repository']['url'], :tag => "v#{s.version}" }
 
   # Build libsodium from source (avoids CocoaPods header pollution)
+  # <<-CMD interpolates Ruby #{} so the version/checksum stay single-sourced.
   s.prepare_command = <<-CMD
     set -e  # Exit on any error
     set -x  # Print commands as they execute
@@ -24,12 +30,10 @@ Pod::Spec.new do |s|
 
     # Pin the exact release tarball (the -stable URL is a mutable alias that
     # can silently change upstream) and verify its SHA-256 before building.
-    LIBSODIUM_VERSION=1.0.20
-    LIBSODIUM_SHA256=ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19
 
     # Download libsodium with verbose output
-    echo "Downloading libsodium ${LIBSODIUM_VERSION}..."
-    curl -f -L -v -o ios/libsodium.tar.gz "https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz"
+    echo "Downloading libsodium #{libsodium_version}..."
+    curl -f -L -v -o ios/libsodium.tar.gz "https://download.libsodium.org/libsodium/releases/libsodium-#{libsodium_version}.tar.gz"
 
     # Verify download
     if [ ! -f ios/libsodium.tar.gz ]; then
@@ -41,24 +45,24 @@ Pod::Spec.new do |s|
 
     # Verify checksum (shasum ships with macOS; a mismatch aborts pod install)
     echo "Verifying libsodium checksum..."
-    echo "${LIBSODIUM_SHA256}  ios/libsodium.tar.gz" | shasum -a 256 -c -
+    echo "#{libsodium_sha256}  ios/libsodium.tar.gz" | shasum -a 256 -c -
 
     # Clean previous extraction
-    rm -rf "ios/libsodium-${LIBSODIUM_VERSION}"
+    rm -rf "ios/libsodium-#{libsodium_version}"
 
     # Extract the full tarball
     echo "Extracting libsodium..."
     tar -xzf ios/libsodium.tar.gz -C ios
 
     # Verify extraction
-    if [ ! -d "ios/libsodium-${LIBSODIUM_VERSION}" ]; then
+    if [ ! -d "ios/libsodium-#{libsodium_version}" ]; then
       echo "ERROR: Failed to extract libsodium"
       exit 1
     fi
 
     # Run configure and make to generate all headers including private ones
     echo "Configuring libsodium..."
-    cd "ios/libsodium-${LIBSODIUM_VERSION}"
+    cd "ios/libsodium-#{libsodium_version}"
     ./configure --disable-shared --enable-static
     
     echo "Building libsodium..."
@@ -85,11 +89,11 @@ Pod::Spec.new do |s|
 
   # iOS-specific compiler settings (set BEFORE nitrogen autolinking)
   sodium_headers = [
-    '"$(PODS_TARGET_SRCROOT)/ios/libsodium-1.0.20/src/libsodium/include"',
-    '"$(PODS_TARGET_SRCROOT)/ios/libsodium-1.0.20/src/libsodium/include/sodium"',
-    '"$(PODS_TARGET_SRCROOT)/ios/libsodium-1.0.20"',
-    '"$(PODS_ROOT)/../../packages/react-native-conceal-crypto/ios/libsodium-1.0.20/src/libsodium/include"',
-    '"$(PODS_ROOT)/../../packages/react-native-conceal-crypto/ios/libsodium-1.0.20/src/libsodium/include/sodium"'
+    "\"$(PODS_TARGET_SRCROOT)/ios/libsodium-#{libsodium_version}/src/libsodium/include\"",
+    "\"$(PODS_TARGET_SRCROOT)/ios/libsodium-#{libsodium_version}/src/libsodium/include/sodium\"",
+    "\"$(PODS_TARGET_SRCROOT)/ios/libsodium-#{libsodium_version}\"",
+    "\"$(PODS_ROOT)/../../packages/react-native-conceal-crypto/ios/libsodium-#{libsodium_version}/src/libsodium/include\"",
+    "\"$(PODS_ROOT)/../../packages/react-native-conceal-crypto/ios/libsodium-#{libsodium_version}/src/libsodium/include/sodium\""
   ]
   
   xcconfig = {
@@ -111,4 +115,3 @@ Pod::Spec.new do |s|
   
   install_modules_dependencies(s)
 end
-
