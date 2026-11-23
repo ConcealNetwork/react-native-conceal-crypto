@@ -52,7 +52,8 @@ describe.skipIf(skipHmac)('native HMAC (cpp/Hmac.cpp vs RFC vectors)', () => {
   });
 
   it('RFC 2202 test case 5 honours the published 96-bit truncation', () => {
-    const c = fixture.cases.find((x) => x.id === 'rfc2202-sha1-tc5')!;
+    const c = fixture.cases.find((x) => x.id === 'rfc2202-sha1-tc5');
+    if (!c) throw new Error('missing fixture rfc2202-sha1-tc5');
     const res = native.exec(c.hash, c.key, c.data);
     expect(res.status).toBe(0);
     expect(res.stdout.trim().slice(0, 24)).toBe(c.hmac.slice(0, 24));
@@ -60,7 +61,8 @@ describe.skipIf(skipHmac)('native HMAC (cpp/Hmac.cpp vs RFC vectors)', () => {
 
   it('RFC 4231 test case 5 honours the published 128-bit truncation', () => {
     for (const id of ['rfc4231-tc5-sha256', 'rfc4231-tc5-sha512'] as const) {
-      const c = fixture.cases.find((x) => x.id === id)!;
+      const c = fixture.cases.find((x) => x.id === id);
+      if (!c) throw new Error(`missing fixture ${id}`);
       const res = native.exec(c.hash, c.key, c.data);
       expect(res.status).toBe(0);
       expect(res.stdout.trim().slice(0, 32)).toBe(c.hmac.slice(0, 32));
