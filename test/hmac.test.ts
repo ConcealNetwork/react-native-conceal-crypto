@@ -52,30 +52,18 @@ describe.skipIf(skipHmac)('native HMAC (cpp/Hmac.cpp vs RFC vectors)', () => {
   });
 
   it('RFC 2202 test case 5 honours the published 96-bit truncation', () => {
-    const res = native.exec(
-      'sha1',
-      '0c'.repeat(20),
-      Buffer.from('Test With Truncation').toString('hex')
-    );
+    const c = fixture.cases.find((x) => x.id === 'rfc2202-sha1-tc5')!;
+    const res = native.exec(c.hash, c.key, c.data);
     expect(res.status).toBe(0);
-    expect(res.stdout.trim().slice(0, 24)).toBe('4c1a03424b55e07fe7f27be1');
+    expect(res.stdout.trim().slice(0, 24)).toBe(c.hmac.slice(0, 24));
   });
 
   it('RFC 4231 test case 5 honours the published 128-bit truncation', () => {
-    const sha256 = native.exec(
-      'sha256',
-      '0c'.repeat(20),
-      Buffer.from('Test With Truncation').toString('hex')
-    );
-    expect(sha256.status).toBe(0);
-    expect(sha256.stdout.trim().slice(0, 32)).toBe('a3b6167473100ee06e0c796c2955552b');
-
-    const sha512 = native.exec(
-      'sha512',
-      '0c'.repeat(20),
-      Buffer.from('Test With Truncation').toString('hex')
-    );
-    expect(sha512.status).toBe(0);
-    expect(sha512.stdout.trim().slice(0, 32)).toBe('415fad6271580a531d4179bc891d87a6');
+    for (const id of ['rfc4231-tc5-sha256', 'rfc4231-tc5-sha512'] as const) {
+      const c = fixture.cases.find((x) => x.id === id)!;
+      const res = native.exec(c.hash, c.key, c.data);
+      expect(res.status).toBe(0);
+      expect(res.stdout.trim().slice(0, 32)).toBe(c.hmac.slice(0, 32));
+    }
   });
 });

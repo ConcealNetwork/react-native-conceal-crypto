@@ -80,7 +80,7 @@ export const skipHmac = skipMnemonic;
 if (skipMnemonic) console.warn('c++ not found: native mnemonic tests SKIPPED');
 
 /** Nitro headers include `<NitroModules/X.hpp>` but ship them in sub-directories; flatten them. */
-function listHeaders(dir: string): string[] {
+export function listHeaders(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
     const p = join(dir, e.name);
     if (e.isDirectory()) return listHeaders(p);
