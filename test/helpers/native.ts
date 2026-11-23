@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -76,7 +76,53 @@ const cxxProbe = spawnSync('c++', ['--version']);
 export const hasCxx = cxxProbe.status === 0;
 /** Same CI rule as skipNative: a missing C++ compiler fails CI instead of skipping. */
 export const skipMnemonic = !hasCxx && !process.env.CI;
+export const skipHmac = skipMnemonic;
 if (skipMnemonic) console.warn('c++ not found: native mnemonic tests SKIPPED');
+
+/** Nitro headers include `<NitroModules/X.hpp>` but ship them in sub-directories; flatten them. */
+export function listHeaders(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) return listHeaders(p);
+    return /\.h(pp)?$/.test(e.name) ? [p] : [];
+  });
+}
+
+/** Compiles test/native/hmac_runner.cpp with cpp/Hmac.cpp + Nitro ArrayBuffer + the jsi bits it drags in (no Nitro runtime). */
+export function buildHmac() {
+  const dir = mkdtempSync(join(tmpdir(), 'hmac-runner-'));
+  mkdirSync(join(dir, 'NitroModules'));
+  const nitro = join(root, 'node_modules/react-native-nitro-modules/cpp');
+  for (const h of listHeaders(nitro)) {
+    symlinkSync(h, join(dir, 'NitroModules', basename(h)));
+  }
+  const bin = join(dir, 'hmac_runner');
+  const build = spawnSync(
+    'c++',
+    [
+      '-std=c++20',
+      '-O2',
+      `-I${dir}`,
+      `-I${join(nitro, 'utils')}`,
+      `-I${join(nitro, 'core')}`,
+      `-I${join(root, 'node_modules/react-native/ReactCommon/jsi')}`,
+      `-I${join(root, 'node_modules/react-native/ReactCommon')}`,
+      `-I${join(root, 'cpp')}`,
+      join(root, 'test/native/hmac_runner.cpp'),
+      join(root, 'cpp/Hmac.cpp'),
+      join(nitro, 'core/ArrayBuffer.cpp'),
+      join(root, 'node_modules/react-native/ReactCommon/jsi/jsi/jsi.cpp'),
+      '-o',
+      bin,
+    ],
+    { encoding: 'utf8' }
+  );
+  if (build.status !== 0) throw new Error(`native HMAC build failed:\n${build.stderr}`);
+  return {
+    exec: (...args: string[]) => spawnSync(bin, args, { encoding: 'utf8' }),
+    cleanup: () => rmSync(dir, { recursive: true, force: true }),
+  };
+}
 
 /** Compiles test/native/mnemonic_runner.cpp with cpp/Mnemonics (no Nitro). */
 export function buildMnemonic() {
