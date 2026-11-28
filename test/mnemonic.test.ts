@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { mnemonic } from 'conceal-lib-js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { buildMnemonic, root, skipMnemonic } from './helpers/native';
+import { buildMnemonic, root, skipCxx } from './helpers/native';
 
 type Case = { key: string; mnemonic: string };
 type RejectEncode = { id: string; hex: string; note: string };
@@ -38,7 +38,7 @@ describe('fixtures', () => {
   );
 });
 
-describe.skipIf(skipMnemonic)('native mnemonics (C++ ↔ conceal-lib-js)', () => {
+describe.skipIf(skipCxx)('native mnemonics (C++ ↔ conceal-lib-js)', () => {
   let native: ReturnType<typeof buildMnemonic>;
 
   beforeAll(() => {
