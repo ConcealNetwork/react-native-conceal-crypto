@@ -15,7 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { buildHmac, root, skipHmac } from './helpers/native';
+import { buildHmac, root, skipCxx } from './helpers/native';
 
 type Case = {
   id: string;
@@ -30,7 +30,7 @@ const fixture: Fixture = JSON.parse(readFileSync(join(root, 'test/fixtures/hmac.
 
 const digestSizes: Record<Case['hash'], number> = { sha1: 40, sha256: 64, sha512: 128 };
 
-describe.skipIf(skipHmac)('native HMAC (cpp/Hmac.cpp vs RFC vectors)', () => {
+describe.skipIf(skipCxx)('native HMAC (cpp/Hmac.cpp vs RFC vectors)', () => {
   let native: ReturnType<typeof buildHmac>;
 
   beforeAll(() => {
